@@ -1,0 +1,105 @@
+.modal-section {
+  margin-bottom: 16px;
+}
+
+.modal-section h4 {
+  margin-bottom: 10px;
+  font-weight: 600;
+  color: #333;
+}
+
+/* Divider */
+.divider {
+  border: none;
+  border-top: 1px solid #e0e0e0;
+  margin: 16px 0;
+}
+
+/* Background list */
+.bg-list {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.bg-item {
+  width: 100px;
+  height: 60px;
+  border-radius: 6px;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.bg-item:hover {
+  transform: scale(1.05);
+}
+
+.bg-item.active {
+  outline: 2px solid #1677ff;
+}
+
+.checkmark {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background: #1677ff;
+  color: #fff;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+}
+
+/* Color list */
+.color-list {
+  display: flex;
+  gap: 10px;
+}
+
+.color-item {
+  width: 40px;
+  height: 40px;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  transition: transform 0.2s;
+}
+
+.color-item:hover {
+  transform: scale(1.1);
+}
+
+.color-item.active {
+  outline: 2px solid #1677ff;
+}
+
+/* Input error */
+.error-text {
+  margin-top: 6px;
+  color: #f5222d;
+  font-size: 13px;
+}
+
+/* Footer buttons */
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.close-btn {
+  border: 1px solid #f5222d !important;
+  color: #f5222d !important;
+}
+
+.close-btn:hover {
+  background: #fff1f0 !important;
+  border-color: #ff4d4f !important;
+}
