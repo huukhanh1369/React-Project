@@ -1,25 +1,35 @@
 {
   "users": [
     {
-      "id": "1704067200000",
-      "email": "test@example.com",
-      "username": "testuser",
-      "password": "Test@1234",
-      "createdAt": "2024-01-01T00:00:00Z"
-    },
-    {
-      "id": 1760581476347,
-      "email": "khanh@gmail.com",
-      "username": "khanh",
-      "password": "Khanh@12345",
-      "createdAt": "2025-10-16T02:24:36.347Z"
-    },
-    {
-      "id": 1760581580112,
+      "id": "1761613564438",
       "email": "bongtuyet2408@gmail.com",
       "username": "thinh",
       "password": "Thinh@123456",
-      "createdAt": "2025-10-16T02:26:20.112Z"
+      "createdAt": "2025-10-28T01:06:04.438Z"
+    },
+    {
+      "id": "1761613847100",
+      "email": "khanh@gmail.com",
+      "username": "RIK000583",
+      "password": "Khanh@123456",
+      "createdAt": "2025-10-28T01:10:47.100Z"
+    }
+  ],
+  "boards": [
+    {
+      "id": "1761786373994",
+      "title": "ádfghegh",
+      "background": "/images/Board2.png",
+      "userId": 1,
+      "createdAt": "2025-10-30T01:06:13.994Z"
+    },
+    {
+      "id": "1761786386553",
+      "title": "ưẻty",
+      "color": "#2196f3",
+      "userId": 1,
+      "createdAt": "2025-10-30T01:06:26.553Z",
+      "background": "/images/Board2.png"
     }
   ]
 }

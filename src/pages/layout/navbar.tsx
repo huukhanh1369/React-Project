@@ -1,8 +1,8 @@
-// src/pages/layout/navbar.tsx
 import React, { useState } from "react";
 import { Input, Button } from "antd";
 import { MenuOutlined, SearchOutlined } from "@ant-design/icons";
 import "./navbar.css";
+import logo from "../../assets/logo/trello-logo-full.png.png"; // ✅ logo Trello
 
 interface NavbarProps {
   onToggleSidebar: () => void;
@@ -13,11 +13,13 @@ const Navbar: React.FC<NavbarProps> = ({ onToggleSidebar }) => {
 
   return (
     <nav className="navbar">
+      {/* Logo + tên bên trái */}
       <div className="navbar-left">
+        <img src={logo} alt="Trello" className="navbar-logo" />
       </div>
 
-      {/* Chỉ hiện khi ở mobile */}
-      <div className="navbar-right mobile-only">
+      {/* Thanh tìm kiếm + menu ở mobile */}
+      <div className="navbar-right">
         <Input
           placeholder="Search..."
           prefix={<SearchOutlined />}

@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Form, Input, Button, Card, Alert } from "antd";
-// import { MailOutlined, LockOutlined, UserOutlined } from '@ant-design/icons';
 import type { SignupCredentials } from "../../types/user.types";
 import { authService } from "../../services/auth/auth.service";
 import "../../App.css";
@@ -14,11 +13,13 @@ const Signup: React.FC = () => {
   const [errorMsg, setErrorMsg] = useState("");
   const navigate = useNavigate();
 
+  // Validate Email format
   const validateEmail = (email: string): boolean => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
 
+  // Validate Password strength
   const validatePassword = (password: string): boolean => {
     const hasLower = /[a-z]/.test(password);
     const hasUpper = /[A-Z]/.test(password);
@@ -33,21 +34,18 @@ const Signup: React.FC = () => {
     const { email, username, password, confirmPassword } = values;
     setErrorMsg("");
 
-    // Validate email format
     if (!validateEmail(email)) {
       setErrorMsg("Email không đúng định dạng");
       return;
     }
 
-    // Validate password strength
     if (!validatePassword(password)) {
       setErrorMsg(
-        "Mật khẩu phải có ít nhất 8 ký tự, 1 chữ thường, chữ hoa, số và ký tự đặc biệt"
+        "Mật khẩu phải có ít nhất 8 ký tự, 1 chữ thường, 1 chữ hoa, 1 số và 1 ký tự đặc biệt"
       );
       return;
     }
 
-    // Validate password match
     if (password !== confirmPassword) {
       setErrorMsg("Mật khẩu không trùng khớp");
       return;
@@ -56,25 +54,22 @@ const Signup: React.FC = () => {
     setLoading(true);
 
     try {
-      // Check if email exists
+      // ✅ Kiểm tra email trùng
       const existingUsers = await authService.checkEmailExists(email);
-
       if (existingUsers.length > 0) {
         setErrorMsg("Email đã được đăng ký");
         setLoading(false);
         return;
       }
 
-      // Create new account
       await authService.signup({ email, username, password });
+      navigate("/dashboard");
 
-      setErrorMsg("");
       form.resetFields();
-      setTimeout(() => {
-        navigate("/", {
-          state: { message: "Đăng ký thành công! Vui lòng đăng nhập." },
-        });
-      }, 500);
+      setErrorMsg("");
+
+      // ✅ Điều hướng sang Dashboard
+      navigate("/dashboard");
     } catch (error) {
       setErrorMsg(error instanceof Error ? error.message : "Lỗi đăng ký");
     } finally {
@@ -106,7 +101,10 @@ const Signup: React.FC = () => {
             name="email"
             rules={[{ required: true, message: "Email không được để trống" }]}
           >
-            <Input placeholder="Email address" />
+            <Input
+              className="!w-[296px] !h-[56px] text-base"
+              placeholder="Email address"
+            />
           </Form.Item>
 
           <Form.Item
@@ -115,7 +113,10 @@ const Signup: React.FC = () => {
               { required: true, message: "Username không được để trống" },
             ]}
           >
-            <Input placeholder="Username" />
+            <Input
+              className="!w-[296px] !h-[56px] text-base"
+              placeholder="Username"
+            />
           </Form.Item>
 
           <Form.Item
@@ -124,7 +125,10 @@ const Signup: React.FC = () => {
               { required: true, message: "Mật khẩu không được để trống" },
             ]}
           >
-            <Input.Password placeholder="Password" />
+            <Input.Password
+              className="!w-[296px] !h-[56px] text-base"
+              placeholder="Password"
+            />
           </Form.Item>
 
           <Form.Item
@@ -136,14 +140,24 @@ const Signup: React.FC = () => {
               },
             ]}
           >
-            <Input.Password placeholder="Confirm password" />
+            <Input.Password
+              className="!w-[296px] !h-[56px] text-base"
+              placeholder="Confirm password"
+            />
           </Form.Item>
+
           <p className="auth-link">
-            Already have an account, <a href="/">click here !</a>
+            Already have an account? <a href="/">Click here!</a>
           </p>
 
           <Form.Item>
-            <Button type="primary" htmlType="submit" block loading={loading}>
+            <Button
+              type="primary"
+              htmlType="submit"
+              block
+              loading={loading}
+              style={{ width: "298px" }}
+            >
               Sign up
             </Button>
           </Form.Item>

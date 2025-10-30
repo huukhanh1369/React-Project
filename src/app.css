@@ -3,6 +3,9 @@
   margin: 0;
   padding: 0;
 }
+@import "tailwindcss";
+@import 'tinymce/skins/ui/oxide/skin.min.css';
+
 
 html,
 body,
@@ -68,8 +71,8 @@ body {
 }
 
 .ant-input {
-  height: 56px !important;
-  width: 296px !important;
+  height: 56px ;
+  width: 296px ;
 }
 
 .ant-input:hover,
@@ -84,7 +87,6 @@ body {
 
 .ant-btn {
   height: 42px;
-  width: 298px !important;
   font-weight: 600;
   font-size: 15px;
   border-radius: 6px;
