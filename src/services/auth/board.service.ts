@@ -3,27 +3,59 @@ import api from "../apis/api";
 import type { Board } from "../../types/board.types";
 
 export const boardService = {
-  // 🔹 Lấy toàn bộ board của 1 user
+  // 🔹 Fetch all boards of a user
   getBoards: async (userId: number): Promise<Board[]> => {
-    const res = await api.get<Board[]>(`/boards?userId=${userId}`);
-    return res.data;
+    try {
+      const res = await api.get<Board[]>(`/boards?userId=${userId}`);
+      return res.data;
+    } catch (error) {
+      console.error("Error fetching boards:", error);
+      throw error;
+    }
   },
 
-  // 🔹 Thêm mới board
+  // 🔹 Create new board
   createBoard: async (board: Omit<Board, "id">): Promise<Board> => {
-    const newBoard = { ...board, id:String(Date.now()) };
-    const res = await api.post<Board>("/boards", newBoard); // ✅ POST đúng
-    return res.data;
+    try {
+      const newBoard: Board = {
+        ...board,
+        id: String(Date.now()),
+      };
+      const res = await api.post<Board>("/boards", newBoard);
+      return res.data;
+    } catch (error) {
+      console.error("Error creating board:", error);
+      throw error;
+    }
   },
 
-  // 🔹 Cập nhật board
-  updateBoard: async (id: number, data: Partial<Board>): Promise<Board> => {
-    const res = await api.patch<Board>(`/boards/${id}`, data);
-    return res.data;
+  // 🔹 Update board - send null to remove unused field
+  updateBoard: async (id: string, data: Partial<Board>): Promise<Board> => {
+    try {
+      const updateData: any = { ...data };
+
+      // Only keep one: background OR color
+      if (data.background) {
+        updateData.color = null; // Send null to delete color field
+      } else if (data.color) {
+        updateData.background = null; // Send null to delete background field
+      }
+
+      const res = await api.patch<Board>(`/boards/${id}`, updateData);
+      return res.data;
+    } catch (error) {
+      console.error("Error updating board:", error);
+      throw error;
+    }
   },
 
-  // 🔹 Xoá board
-  deleteBoard: async (id: number): Promise<void> => {
-    await api.delete(`/boards/${id}`);
+  // 🔹 Delete board
+  deleteBoard: async (id: string): Promise<void> => {
+    try {
+      await api.delete(`/boards/${id}`);
+    } catch (error) {
+      console.error("Error deleting board:", error);
+      throw error;
+    }
   },
 };

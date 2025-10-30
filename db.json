@@ -17,19 +17,12 @@
   ],
   "boards": [
     {
-      "id": "1761786373994",
-      "title": "ádfghegh",
-      "background": "/images/Board2.png",
+      "id": "1761787022180",
+      "title": "fghjk",
+      "color": "#ffc107",
       "userId": 1,
-      "createdAt": "2025-10-30T01:06:13.994Z"
-    },
-    {
-      "id": "1761786386553",
-      "title": "ưẻty",
-      "color": "#2196f3",
-      "userId": 1,
-      "createdAt": "2025-10-30T01:06:26.553Z",
-      "background": "/images/Board2.png"
+      "createdAt": "2025-10-30T01:17:02.180Z",
+      "background": null
     }
   ]
 }

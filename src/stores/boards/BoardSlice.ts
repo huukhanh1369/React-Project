@@ -2,10 +2,10 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import api from "../../services/apis/api";
 
 // =========================
-// 🔹 Interface
+// 📋 Interface
 // =========================
 export interface Board {
-  id: string; 
+  id: string;
   title: string;
   background?: string;
   color?: string;
@@ -16,7 +16,7 @@ export interface Board {
 }
 
 // =========================
-// 🔹 State
+// 📋 State
 // =========================
 interface BoardState {
   boards: Board[];
@@ -31,60 +31,77 @@ const initialState: BoardState = {
 };
 
 // =========================
-// 🔹 Thunks
+// 📋 Thunks
 // =========================
 
-// ✅ Lấy toàn bộ boards theo userId
+// ✅ Fetch all boards by userId
 export const fetchBoards = createAsyncThunk(
   "boards/fetchBoards",
-  async (userId: number) => {
-    const response = await api.get<Board[]>(`/boards?userId=${userId}`);
-    return response.data;
+  async (userId: number, { rejectWithValue }) => {
+    try {
+      const response = await api.get<Board[]>(`/boards?userId=${userId}`);
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || "Failed to fetch boards");
+    }
   }
 );
 
-// ✅ Thêm board mới
+// ✅ Add new board
 export const addBoard = createAsyncThunk(
   "boards/addBoard",
-  async (board: Omit<Board, "id" | "createdAt">) => {
-    const newBoard: Board = {
-      ...board,
-      id: String(Date.now()),
-      createdAt: new Date().toISOString(),
-    };
-    const response = await api.post<Board>("/boards", newBoard);
-    return response.data;
+  async (board: Omit<Board, "id" | "createdAt">, { rejectWithValue }) => {
+    try {
+      const newBoard: Board = {
+        ...board,
+        id: String(Date.now()),
+        createdAt: new Date().toISOString(),
+      };
+      const response = await api.post<Board>("/boards", newBoard);
+      return response.data;p
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || "Failed to add board");
+    }
   }
 );
 
-// ✅ Cập nhật board (xoá key thừa nếu chuyển giữa color ↔ background)
+// ✅ Update board (send null to delete unused field: background OR color)
 export const updateBoard = createAsyncThunk(
   "boards/updateBoard",
-  async (board: Board) => {
-    // Nếu có background thì xoá color, ngược lại xoá background
-    const cleanBoard: Partial<Board> = {
-      ...board,
-      ...(board.background
-        ? { color: undefined }
-        : { background: undefined }),
-    };
+  async (board: Board, { rejectWithValue }) => {
+    try {
+      const updateData: any = { ...board };
 
-    const response = await api.patch<Board>(`/boards/${board.id}`, cleanBoard);
-    return response.data;
+      // Only keep one: background OR color
+      if (board.background) {
+        updateData.color = null; // Send null to delete color field
+      } else if (board.color) {
+        updateData.background = null; // Send null to delete background field
+      }
+
+      const response = await api.patch<Board>(`/boards/${board.id}`, updateData);
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || "Failed to update board");
+    }
   }
 );
 
-// ✅ Xoá board
+// ✅ Delete board
 export const deleteBoard = createAsyncThunk(
   "boards/deleteBoard",
-  async (id: string) => {
-    await api.delete(`/boards/${id}`);
-    return id;
+  async (id: string, { rejectWithValue }) => {
+    try {
+      await api.delete(`/boards/${id}`);
+      return id;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || "Failed to delete board");
+    }
   }
 );
 
 // =========================
-// 🔹 Slice
+// 📋 Slice
 // =========================
 const boardSlice = createSlice({
   name: "boards",
@@ -103,12 +120,15 @@ const boardSlice = createSlice({
       })
       .addCase(fetchBoards.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || "Failed to fetch boards";
+        state.error = (action.payload as string) || "Failed to fetch boards";
       })
 
       // --- ADD ---
       .addCase(addBoard.fulfilled, (state, action) => {
         state.boards.push(action.payload);
+      })
+      .addCase(addBoard.rejected, (state, action) => {
+        state.error = (action.payload as string) || "Failed to add board";
       })
 
       // --- UPDATE ---
@@ -118,10 +138,16 @@ const boardSlice = createSlice({
           state.boards[index] = action.payload;
         }
       })
+      .addCase(updateBoard.rejected, (state, action) => {
+        state.error = (action.payload as string) || "Failed to update board";
+      })
 
       // --- DELETE ---
       .addCase(deleteBoard.fulfilled, (state, action) => {
         state.boards = state.boards.filter((b) => b.id !== action.payload);
+      })
+      .addCase(deleteBoard.rejected, (state, action) => {
+        state.error = (action.payload as string) || "Failed to delete board";
       });
   },
 });

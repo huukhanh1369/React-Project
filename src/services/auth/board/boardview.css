@@ -31,6 +31,8 @@ body {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  /* ✅ Thêm margin-top để tránh navbar fixed */
+  margin-top: 64px;
 }
 
 /* ===========================
@@ -104,9 +106,7 @@ body {
 .board-btn-close {
   color: #172B4D;
   border: none;
-
 }
-
 
 .board-header-right {
   display: flex;

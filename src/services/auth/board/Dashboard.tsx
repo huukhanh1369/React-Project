@@ -61,7 +61,19 @@ const Dashboard: React.FC = () => {
           return;
         }
 
-        const updated = await boardService.updateBoard(editingBoard.id, boardData);
+        // ✅ Xoá field không dùng trước khi gửi
+        const cleanData: Partial<Board> = { ...boardData };
+
+        if (boardData.background) {
+          delete cleanData.color; // Nếu chọn background, xoá color
+        } else if (boardData.color) {
+          delete cleanData.background; // Nếu chọn color, xoá background
+        }
+
+        const updated = await boardService.updateBoard(
+          editingBoard.id,
+          cleanData
+        );
         setBoards((prev) =>
           prev.map((b) => (b.id === editingBoard.id ? { ...b, ...updated } : b))
         );
