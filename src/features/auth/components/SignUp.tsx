@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Form, Input, Button, Card, Alert } from "antd";
-import type { SignupCredentials } from "../../types/user.types";
-import { authService } from "../../services/auth/auth.service";
-import "../../App.css";
+import type { SignupCredentials } from "../../../types/user.types";
+import { authService } from "../../auth/auth.service";
+import "../../../app.css";
 
 type FormValues = SignupCredentials;
 

@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import type { Tag, CreateTagPayload, UpdateTagPayload } from "../../types/tag.types";
-import { tagService } from "../../services/auth/tag.service";
+import { tagService } from "./tag.service";
 
 interface TagsState {
   items: Tag[];

@@ -7,13 +7,13 @@ import {
   CalendarOutlined,
 } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
-import Sidebar from "../../../pages/layout/Sidebar";
-import Navbar from "../../../pages/layout/Navbar";
-import BoardModal from "../../../pages/layout/modals/BoardModal";
-import { boardService } from "../../auth/board.service";
+import Sidebar from "../../../components/layout/Sidebar";
+import Navbar from "../../../components/layout/Navbar";
+import BoardModal from "../components/modals/BoardModal";
+import { boardService } from "../board.service";
 import type { Board } from "../../../types/board.types";
 import "./dashboard.css";
-import api from "../../apis/api";
+import api from "../../../apis/api";
 
 const Dashboard: React.FC = () => {
   const [boards, setBoards] = useState<Board[]>([]);

@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import type { TaskList, CreateListPayload, UpdateListPayload, ListsState } from "../../types/list.types";
-import { listService } from "../../services/auth/list.service";
+import { listService } from "./list.service";
 
 const initialState: ListsState = {
   items: [],

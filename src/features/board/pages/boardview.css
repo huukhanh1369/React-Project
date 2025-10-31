@@ -31,7 +31,6 @@ body {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  /* ✅ Thêm margin-top để tránh navbar fixed */
   margin-top: 64px;
 }
 
@@ -70,7 +69,6 @@ body {
 .board-title {
   font-size: 22px;
   font-weight: 600;
-  /* color: #172B4D !important; */
   margin: 0;
   white-space: nowrap;
 }
@@ -151,6 +149,7 @@ body {
   padding: 14px 12px;
   border-bottom: 1px solid #e5e7eb;
   background-color: #F1F2F4;
+  min-height: 48px;
 }
 
 .list-title {
@@ -158,6 +157,29 @@ body {
   font-weight: 600;
   color: #172B4D;
   margin: 0;
+  cursor: pointer;
+  padding: 6px 8px;
+  border-radius: 4px;
+  flex: 1;
+  user-select: none;
+  transition: background-color 0.2s ease;
+}
+
+.list-title:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.list-title-input {
+  font-size: 14px;
+  font-weight: 600;
+  color: #172B4D;
+  margin: 0;
+  flex: 1;
+}
+
+.list-title-input input {
+  padding: 4px 8px !important;
+  height: 28px !important;
 }
 
 .list-menu-btn {
@@ -168,6 +190,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 }
 
 .list-menu-btn:hover {
@@ -200,6 +223,7 @@ body {
 
 .card-item:hover {
   border-color: #d1d5db;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
 }
 
 .card-content {
@@ -209,12 +233,11 @@ body {
   margin: 0;
 }
 
-.card-check-icon {
-  color: #10b981;
-  font-size: 14px;
-  font-weight: 600;
-  flex-shrink: 0;
+.card-checkbox {
   margin-top: 2px;
+  cursor: pointer;
+  accent-color: #10b981;
+  flex-shrink: 0;
 }
 
 .card-text {
@@ -223,11 +246,45 @@ body {
   line-height: 1.4;
   word-wrap: break-word;
   margin: 0;
+  flex: 1;
 }
 
 .card-text.completed {
   text-decoration: line-through;
   color: #9ca3af;
+}
+
+/* ===========================
+   ADD CARD FORM
+=========================== */
+.add-card-form {
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.add-card-input {
+  width: 100%;
+  padding: 6px 8px !important;
+  font-size: 13px !important;
+}
+
+.add-card-input input {
+  resize: none;
+}
+
+.add-card-actions {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.add-card-actions button {
+  font-size: 12px;
 }
 
 /* ===========================
@@ -245,6 +302,7 @@ body {
   text-align: left !important;
   height: auto;
   margin-top: 4px;
+  transition: color 0.2s ease;
 }
 
 .add-card-btn:hover {
@@ -288,6 +346,46 @@ body {
 
 .add-list-btn:hover {
   color: #1677ff;
+}
+
+/* ===========================
+   ADD LIST FORM
+=========================== */
+.add-list-form {
+  width: 272px;
+  padding: 12px;
+  background-color: #F1F2F4;
+  border-radius: 6px;
+  border: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.add-list-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.add-list-input {
+  width: 100%;
+  padding: 8px 12px !important;
+  font-size: 13px !important;
+  border-radius: 4px !important;
+}
+
+.add-list-actions {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.add-list-actions button {
+  font-size: 12px;
+}
+
+.add-list-actions .ant-btn-primary {
+  background-color: #0052CC;
 }
 
 /* ===========================
@@ -365,6 +463,10 @@ body {
     max-height: calc(100vh - 180px);
   }
 
+  .add-list-form {
+    width: 256px;
+  }
+
   .card-item {
     padding: 8px 10px;
   }
@@ -415,6 +517,10 @@ body {
   }
 
   .list-card {
+    width: 240px;
+  }
+
+  .add-list-form {
     width: 240px;
   }
 }

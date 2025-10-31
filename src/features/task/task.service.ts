@@ -1,6 +1,6 @@
 import type { Task, CreateTaskPayload, UpdateTaskPayload } from "../../types/task.types";
 
-const API_URL = "http://localhost:3000";
+const API_URL = "http://localhost:3001";
 
 export const taskService = {
   // Lấy tất cả tasks của một list

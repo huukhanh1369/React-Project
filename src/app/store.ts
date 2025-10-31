@@ -1,9 +1,9 @@
 import { configureStore } from "@reduxjs/toolkit";
-import authReducer from "./slices/authSlice";
-import boardReducer from "./boards/BoardSlice";
-import listReducer from "./lists/listSlice";
-import taskReducer from "./tasks/taskSlice";
-import tagReducer from "./tags/tagSlice";
+import authReducer from "../features/auth/authSlice";
+import boardReducer from "../features/board/BoardSlice";
+import listReducer from "../features/list/listSlice";
+import taskReducer from "../features/task/taskSlice";
+import tagReducer from "../features/tag/tagSlice";
 
 export const store = configureStore({
   reducer: {

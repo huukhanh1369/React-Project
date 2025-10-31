@@ -2,10 +2,10 @@ import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { Form, Input, Button, Card, Alert, Checkbox } from "antd";
-import { authService } from "../../services/auth/auth.service";
-import { setAuthData } from "../../stores/slices/authSlice";
-import type { LoginCredentials } from "../../types/user.types";
-import "../../app.css";
+import { authService } from "../auth.service";
+import { setAuthData } from "../authSlice";
+import type { LoginCredentials } from "../../../types/user.types";
+import "../../../app.css";
 
 interface LocationState {
   message?: string;

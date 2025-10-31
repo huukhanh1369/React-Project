@@ -1,6 +1,6 @@
 import type { TaskList, CreateListPayload, UpdateListPayload } from "../../types/list.types";
 
-const API_URL = "http://localhost:3000";
+const API_URL = "http://localhost:3001";
 
 export const listService = {
   // Lấy tất cả lists của một board

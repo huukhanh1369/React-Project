@@ -1,6 +1,6 @@
 import type { Tag, CreateTagPayload, UpdateTagPayload } from "../../types/tag.types";
 
-const API_URL = "http://localhost:3000";
+const API_URL = "http://localhost:3001";
 
 export const tagService = {
   // Lấy tất cả tags của một task

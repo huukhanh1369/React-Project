@@ -1,5 +1,5 @@
 // src/services/board/board.service.ts
-import api from "../apis/api";
+import api from "../../apis/api";
 import type { Board } from "../../types/board.types";
 
 export const boardService = {

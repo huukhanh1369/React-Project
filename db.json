@@ -19,10 +19,158 @@
     {
       "id": "1761787022180",
       "title": "fghjk",
-      "color": "#ffc107",
+      "color": null,
       "userId": 1,
       "createdAt": "2025-10-30T01:17:02.180Z",
-      "background": null
+      "background": "/images/Board1.png"
+    },
+    {
+      "id": "1761792633840",
+      "title": "kytrew",
+      "background": "/images/Board3.png",
+      "userId": 1,
+      "createdAt": "2025-10-30T02:50:33.840Z"
+    }
+  ],
+  "lists": [
+    {
+      "id": "list_1",
+      "title": "Todo",
+      "boardId": "board_1",
+      "order": 1,
+      "tasks": [],
+      "createdAt": "2025-01-01T00:00:00Z",
+      "updatedAt": "2025-10-30T02:49:50.797Z"
+    },
+    {
+      "id": "list_2",
+      "title": "khanh",
+      "boardId": "board_1",
+      "order": 2,
+      "tasks": [],
+      "createdAt": "2025-01-01T00:00:00Z",
+      "updatedAt": "2025-10-30T02:49:58.392Z"
+    },
+    {
+      "id": "list_1761792509642",
+      "title": "fdrhy",
+      "boardId": "board_1",
+      "tasks": [],
+      "order": 3,
+      "createdAt": "2025-10-30T02:48:29.642Z",
+      "updatedAt": "2025-10-30T02:51:55.773Z"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "task_1",
+      "title": "Thuê DJ",
+      "description": "Liên hệ DJ cho sự kiện",
+      "completed": true,
+      "listId": "list_1",
+      "tags": [],
+      "createdAt": "2025-01-01T00:00:00Z",
+      "updatedAt": "2025-01-01T00:00:00Z"
+    },
+    {
+      "id": "task_2",
+      "title": "Lên kịch bản chương trình",
+      "description": "Viết timeline chi tiết cho MC",
+      "completed": true,
+      "listId": "list_1",
+      "tags": [],
+      "createdAt": "2025-01-01T00:00:00Z",
+      "updatedAt": "2025-01-01T00:00:00Z"
+    },
+    {
+      "id": "task_3",
+      "title": "Chuẩn bị kịch bản",
+      "description": "Soạn kịch bản cho từng tiết mục",
+      "completed": false,
+      "listId": "list_1",
+      "tags": [],
+      "createdAt": "2025-01-01T00:00:00Z",
+      "updatedAt": "2025-01-01T00:00:00Z"
+    },
+    {
+      "id": "task_4",
+      "title": "Kịch bản",
+      "description": "Kịch bản tổng duyệt",
+      "completed": true,
+      "listId": "list_1",
+      "tags": [],
+      "createdAt": "2025-01-01T00:00:00Z",
+      "updatedAt": "2025-01-01T00:00:00Z"
+    },
+    {
+      "id": "task_5",
+      "title": "Thuê MC",
+      "description": "Liên hệ MC chính cho sự kiện",
+      "completed": false,
+      "listId": "list_1",
+      "tags": [],
+      "createdAt": "2025-01-01T00:00:00Z",
+      "updatedAt": "2025-01-01T00:00:00Z"
+    },
+    {
+      "id": "task_6",
+      "title": "Setup sân khấu",
+      "description": "Dựng sân khấu, âm thanh, ánh sáng",
+      "completed": false,
+      "listId": "list_2",
+      "tags": [],
+      "createdAt": "2025-01-01T00:00:00Z",
+      "updatedAt": "2025-01-01T00:00:00Z"
+    },
+    {
+      "id": "task_1761792514108",
+      "title": "hcfhbxcb",
+      "listId": "list_1761792509642",
+      "completed": true,
+      "tags": [],
+      "createdAt": "2025-10-30T02:48:34.108Z",
+      "updatedAt": "2025-10-30T02:48:38.995Z"
+    },
+    {
+      "id": "task_1761869021651",
+      "title": "thinh",
+      "listId": "list_1",
+      "completed": false,
+      "tags": [],
+      "createdAt": "2025-10-31T00:03:41.651Z",
+      "updatedAt": "2025-10-31T00:03:41.651Z"
+    },
+    {
+      "id": "task_1761869024480",
+      "title": "khanh",
+      "listId": "list_1",
+      "completed": false,
+      "tags": [],
+      "createdAt": "2025-10-31T00:03:44.480Z",
+      "updatedAt": "2025-10-31T00:03:44.480Z"
+    },
+    {
+      "id": "task_1761869026508",
+      "title": "tri",
+      "listId": "list_1",
+      "completed": false,
+      "tags": [],
+      "createdAt": "2025-10-31T00:03:46.508Z",
+      "updatedAt": "2025-10-31T00:03:46.508Z"
+    }
+  ],
+  "tags": [
+    {
+      "id": "tag_1",
+      "name": "Urgent",
+      "color": "#FF5733",
+      "taskId": "task_3"
+    },
+    {
+      "id": "tag_2",
+      "name": "Important",
+      "color": "#FFC300",
+      "taskId": "task_5"
     }
   ]
 }
