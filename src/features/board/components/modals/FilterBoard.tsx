@@ -1,7 +1,5 @@
 import { CalendarOutlined, ClockCircleOutlined } from "@ant-design/icons";
 import { Drawer, Input, Checkbox, Select, Divider } from "antd";
-// import React from "react";
-// import { useTranslation } from "react-i18next";
 
 type PropsType = {
   open: boolean;
@@ -9,7 +7,6 @@ type PropsType = {
 };
 
 const FilterBoard = ({ open, onClose }: PropsType) => {
-  // const {t} = useTranslation()
   return (
     <Drawer
       title={"filter"}

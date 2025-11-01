@@ -1,20 +1,21 @@
-import type { Tag } from "./tag.types";
-
 export interface Task {
   id: string;
   title: string;
   description?: string;
   completed: boolean;
   listId: string;
-  tags: Tag[];
+  position: string;
+  tags?: string[]; // Array of tag IDs
+  startDate?: string | null; // ISO format date string
+  dueDate?: string | null; // ISO format date string
   createdAt: string;
   updatedAt: string;
 }
 
 export interface CreateTaskPayload {
   title: string;
-  description?: string;
   listId: string;
+  description?: string;
 }
 
 export interface UpdateTaskPayload {
@@ -22,11 +23,7 @@ export interface UpdateTaskPayload {
   title?: string;
   description?: string;
   completed?: boolean;
-}
-
-export interface TasksState {
-  items: Task[];
-  loading: boolean;
-  error: string | null;
-  selectedTask: Task | null;
+  position?: string;
+  startDate?: string | null;
+  dueDate?: string | null;
 }

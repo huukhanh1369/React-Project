@@ -12,6 +12,7 @@ import { updateTask, deleteTask } from "../../../task/taskSlice";
 import MoveCardModal from "./MoveCardModal";
 import LabelListModal from "./LabelListModal";
 import DatePickerModal from "./DatePickerModal";
+import ConfirmModal from "./ConfirmModal"; // ✅ import modal xác nhận
 
 interface CardEditModalProps {
   visible: boolean;
@@ -38,10 +39,11 @@ const CardEditModal: React.FC<CardEditModalProps> = ({
   const [isMoveModalVisible, setIsMoveModalVisible] = useState(false);
   const [isLabelModalVisible, setIsLabelModalVisible] = useState(false);
   const [isDateModalVisible, setIsDateModalVisible] = useState(false);
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false); // ✅ modal xác nhận xóa
 
   const editorRef = useRef<any>(null);
 
-  // Update states chỉ khi visible thay đổi và card có giá trị
+  // Update states khi mở modal
   useEffect(() => {
     if (visible && card) {
       setCardTitle(card.title || "");
@@ -50,7 +52,7 @@ const CardEditModal: React.FC<CardEditModalProps> = ({
     }
   }, [visible, card?.id]);
 
-  // --- HANDLERS ---
+  // --- SAVE CARD ---
   const handleSave = async () => {
     if (!cardTitle.trim()) {
       message.warning("Please enter a card title");
@@ -77,26 +79,28 @@ const CardEditModal: React.FC<CardEditModalProps> = ({
     }
   };
 
-  const handleDelete = async () => {
-    Modal.confirm({
-      title: "Delete Card",
-      content: "Are you sure you want to delete this card?",
-      okText: "Yes",
-      cancelText: "No",
-      okButtonProps: { danger: true },
-      onOk: async () => {
-        try {
-          await dispatch(deleteTask(card.id) as any);
-          message.success("Card deleted successfully!");
-          onClose();
-        } catch (error) {
-          console.error("Error deleting card:", error);
-          message.error("Failed to delete card");
-        }
-      },
-    });
+  // --- DELETE CONFIRM LOGIC ---
+  const handleDelete = () => {
+    setIsConfirmOpen(true);
   };
 
+  const handleConfirmDelete = async () => {
+    try {
+      await dispatch(deleteTask(card.id) as any);
+      message.success("Card deleted successfully!");
+      setIsConfirmOpen(false);
+      onClose();
+    } catch (error) {
+      console.error("Error deleting card:", error);
+      message.error("Failed to delete card");
+    }
+  };
+
+  const handleCancelDelete = () => {
+    setIsConfirmOpen(false);
+  };
+
+  // --- MODALS CON ---
   const handleOpenMoveModal = () => setIsMoveModalVisible(true);
   const handleCloseMoveModal = () => setIsMoveModalVisible(false);
 
@@ -108,7 +112,6 @@ const CardEditModal: React.FC<CardEditModalProps> = ({
     console.log("🔦 Card moved to:", newListId, "position:", newPosition);
   };
 
-  // Safety check
   if (!card) return null;
 
   return (
@@ -125,7 +128,7 @@ const CardEditModal: React.FC<CardEditModalProps> = ({
         destroyOnClose
       >
         <div className="space-y-4">
-          {/* Tiêu đề card + checkbox */}
+          {/* Tiêu đề card */}
           <div className="flex items-center gap-2 !h-[36px]">
             <div className="w-6 h-6 rounded-full border-2 border-gray-400 flex-shrink-0 cursor-pointer hover:border-gray-600"></div>
             <div className="flex-1">
@@ -147,10 +150,7 @@ const CardEditModal: React.FC<CardEditModalProps> = ({
           {/* In list section */}
           <div className="flex items-center gap-2 !ml-8">
             <span className="text-sm text-gray-600">in list</span>
-            <div 
-              onClick={handleOpenMoveModal}
-              className="cursor-pointer"
-            >
+            <div onClick={handleOpenMoveModal} className="cursor-pointer">
               <Select
                 value={listId}
                 open={false}
@@ -175,16 +175,14 @@ const CardEditModal: React.FC<CardEditModalProps> = ({
 
           {/* --- Description section --- */}
           <div className="flex gap-4">
-            {/* Left: icon + editor */}
+            {/* Left: Editor */}
             <div className="flex gap-3 flex-1">
               <div className="flex-shrink-0 pt-1">
                 <AlignLeftOutlined className="text-gray-700 text-lg" />
               </div>
 
               <div className="flex-1">
-                <h3 className="font-semibold text-gray-800 mb-3">
-                  Description
-                </h3>
+                <h3 className="font-semibold text-gray-800 mb-3">Description</h3>
 
                 <div
                   className="border border-gray-300 rounded overflow-hidden"
@@ -290,6 +288,7 @@ const CardEditModal: React.FC<CardEditModalProps> = ({
         <LabelListModal
           visible={isLabelModalVisible}
           onClose={handleCloseLabelModal}
+          taskId={card.id}
         />
       )}
 
@@ -300,6 +299,18 @@ const CardEditModal: React.FC<CardEditModalProps> = ({
           onClose={() => setIsDateModalVisible(false)}
         />
       )}
+
+      {/* --- Confirm Delete Modal --- */}
+      <ConfirmModal
+        open={isConfirmOpen}
+        title="Are you sure?"
+        message="You won't be able to revert this!"
+        confirmText="Yes, delete it!"
+        cancelText="Cancel"
+        confirmType="danger"
+        onConfirm={handleConfirmDelete}
+        onCancel={handleCancelDelete}
+      />
     </>
   );
 };

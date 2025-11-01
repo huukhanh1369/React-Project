@@ -589,7 +589,7 @@ const BoardView: React.FC = () => { // ← Xóa { boardId?: string } prop
                   })}
                 </>
               ) : (
-                <div style={{ padding: "20px" }}>No lists found</div>
+                <div style={{ padding: "20px" }}></div>
               )}
 
               {/* Add another list */}

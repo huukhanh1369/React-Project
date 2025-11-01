@@ -1,120 +1,223 @@
+import api from "../../apis/api";
 import type { Task, CreateTaskPayload, UpdateTaskPayload } from "../../types/task.types";
 
-const API_URL = "http://localhost:3001";
-
 export const taskService = {
-  // Lấy tất cả tasks của một list
+  // 🔹 Lấy tất cả tasks của một list
   getTasksByListId: async (listId: string): Promise<Task[]> => {
     try {
-      console.log("Fetching tasks for listId:", listId);
-      const response = await fetch(`${API_URL}/tasks?listId=${listId}`);
-      if (!response.ok) throw new Error("Failed to fetch tasks");
-      const data = await response.json();
-      console.log("Tasks fetched for list", listId, ":", data);
-      return data;
+      console.log("📥 Fetching tasks for listId:", listId);
+      const response = await api.get<Task[]>(`/tasks?listId=${listId}`);
+      console.log("✅ Tasks fetched:", response.data.length, "tasks");
+      return response.data;
     } catch (error) {
       console.error("Error fetching tasks:", error);
       throw error;
     }
   },
 
-  // Lấy chi tiết một task
+  // 🔹 Lấy single task by ID
   getTaskById: async (taskId: string): Promise<Task> => {
     try {
-      const response = await fetch(`${API_URL}/tasks/${taskId}`);
-      if (!response.ok) throw new Error("Failed to fetch task");
-      return await response.json();
+      console.log("📥 Fetching task:", taskId);
+      const response = await api.get<Task>(`/tasks/${taskId}`);
+      return response.data;
     } catch (error) {
       console.error("Error fetching task:", error);
       throw error;
     }
   },
 
-  // Tạo task mới
+  // 🔹 Tạo task mới
   createTask: async (payload: CreateTaskPayload): Promise<Task> => {
     try {
-      // Lấy số tasks hiện tại trong list để set position
-      const tasksInList = await taskService.getTasksByListId(payload.listId);
-      const position = String(tasksInList.length + 1);
-
-      const response = await fetch(`${API_URL}/tasks`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          id: `task_${Date.now()}`,
-          ...payload,
-          description: "",
-          position: position,
-          completed: false,
-          tags: [],
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        }),
-      });
-      if (!response.ok) throw new Error("Failed to create task");
-      return await response.json();
+      const newTask: Task = {
+        id: `task_${Date.now()}`,
+        ...payload,
+        completed: false,
+        position: String(Date.now()),
+        startDate: null,
+        dueDate: null,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+      console.log("✅ Creating task:", newTask.title);
+      const response = await api.post<Task>("/tasks", newTask);
+      console.log("✅ Task created:", response.data.id);
+      return response.data;
     } catch (error) {
       console.error("Error creating task:", error);
       throw error;
     }
   },
 
-  // Cập nhật task (bao gồm title, description, listId, position)
-  updateTask: async (payload: UpdateTaskPayload): Promise<Task> => {
+  // 🔹 Cập nhật task (bao gồm dates, description, etc)
+  updateTask: async (id: string, payload: Partial<UpdateTaskPayload>): Promise<Task> => {
     try {
-      const response = await fetch(`${API_URL}/tasks/${payload.id}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ...payload,
-          updatedAt: new Date().toISOString(),
-        }),
-      });
-      if (!response.ok) throw new Error("Failed to update task");
-      return await response.json();
+      const updateData = {
+        ...payload,
+        updatedAt: new Date().toISOString(),
+      };
+      console.log("✏️ Updating task:", id);
+      console.log("   Data:", updateData);
+      const response = await api.patch<Task>(`/tasks/${id}`, updateData);
+      console.log("✅ Task updated:", response.data.id);
+      return response.data;
     } catch (error) {
       console.error("Error updating task:", error);
       throw error;
     }
   },
 
-  // Xóa task
+  // 🔹 Update title
+  updateTaskTitle: async (taskId: string, title: string): Promise<Task> => {
+    try {
+      console.log("✏️ Updating task title:", taskId, "→", title);
+      const response = await api.patch<Task>(`/tasks/${taskId}`, {
+        title: title.trim(),
+        updatedAt: new Date().toISOString(),
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error updating task title:", error);
+      throw error;
+    }
+  },
+
+  // 🔹 Update description
+  updateTaskDescription: async (taskId: string, description: string): Promise<Task> => {
+    try {
+      console.log("✏️ Updating task description:", taskId);
+      const response = await api.patch<Task>(`/tasks/${taskId}`, {
+        description: description.trim(),
+        updatedAt: new Date().toISOString(),
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error updating task description:", error);
+      throw error;
+    }
+  },
+
+  // 🔹 Toggle task completion
+  toggleTaskCompletion: async (taskId: string, completed: boolean): Promise<Task> => {
+    try {
+      console.log("🔄 Toggling task completion:", taskId, "→", completed);
+      const response = await api.patch<Task>(`/tasks/${taskId}`, {
+        completed: completed,
+        updatedAt: new Date().toISOString(),
+      });
+      console.log("✅ Task completion toggled");
+      return response.data;
+    } catch (error) {
+      console.error("Error toggling task completion:", error);
+      throw error;
+    }
+  },
+
+  // 🔹 Update task dates (start & due)
+  updateTaskDates: async (
+    taskId: string,
+    startDate: string | null,
+    dueDate: string | null
+  ): Promise<Task> => {
+    try {
+      console.log("📅 Updating task dates:", taskId);
+      console.log("   Start date:", startDate);
+      console.log("   Due date:", dueDate);
+      const response = await api.patch<Task>(`/tasks/${taskId}`, {
+        startDate,
+        dueDate,
+        updatedAt: new Date().toISOString(),
+      });
+      console.log("✅ Task dates updated");
+      return response.data;
+    } catch (error) {
+      console.error("Error updating task dates:", error);
+      throw error;
+    }
+  },
+
+  // 🔹 Update task position (drag & drop)
+  updateTaskPosition: async (taskId: string, position: string): Promise<Task> => {
+    try {
+      console.log("🔀 Updating task position:", taskId, "→", position);
+      const response = await api.patch<Task>(`/tasks/${taskId}`, {
+        position,
+        updatedAt: new Date().toISOString(),
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error updating task position:", error);
+      throw error;
+    }
+  },
+
+  // 🔹 Move task to different list
+  moveTaskToList: async (taskId: string, newListId: string): Promise<Task> => {
+    try {
+      console.log("🔀 Moving task to list:", taskId, "→", newListId);
+      const response = await api.patch<Task>(`/tasks/${taskId}`, {
+        listId: newListId,
+        updatedAt: new Date().toISOString(),
+      });
+      console.log("✅ Task moved to list");
+      return response.data;
+    } catch (error) {
+      console.error("Error moving task:", error);
+      throw error;
+    }
+  },
+
+  // 🔹 Xóa task
   deleteTask: async (taskId: string): Promise<void> => {
     try {
-      const response = await fetch(`${API_URL}/tasks/${taskId}`, {
-        method: "DELETE",
-      });
-      if (!response.ok) throw new Error("Failed to delete task");
+      console.log("🗑️ Deleting task:", taskId);
+      await api.delete(`/tasks/${taskId}`);
+      console.log("✅ Task deleted");
     } catch (error) {
       console.error("Error deleting task:", error);
       throw error;
     }
   },
 
-  // Toggle completed status
-  toggleTaskCompletion: async (
-    taskId: string,
-    completed: boolean
-  ): Promise<Task> => {
+  // 🔹 Lấy tất cả tasks của một board
+  getTasksByBoardId: async (boardId: string): Promise<Task[]> => {
     try {
-      const response = await fetch(`${API_URL}/tasks/${taskId}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          completed,
-          updatedAt: new Date().toISOString(),
-        }),
-      });
-      if (!response.ok) throw new Error("Failed to toggle task completion");
-      return await response.json();
+      console.log("📥 Fetching all tasks for board:", boardId);
+      // Lấy tất cả lists của board, sau đó lấy tasks của từng list
+      const response = await api.get<Task[]>(`/tasks?boardId=${boardId}`);
+      return response.data;
     } catch (error) {
-      console.error("Error toggling task completion:", error);
+      console.error("Error fetching tasks by board:", error);
+      throw error;
+    }
+  },
+
+  // 🔹 Filter tasks by dates
+  getTasksByDateRange: async (
+    startDate: string,
+    endDate: string
+  ): Promise<Task[]> => {
+    try {
+      console.log("📅 Fetching tasks between:", startDate, "and", endDate);
+      const response = await api.get<Task[]>(
+        `/tasks?startDate_gte=${startDate}&dueDate_lte=${endDate}`
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching tasks by date range:", error);
+      throw error;
+    }
+  },
+
+  // 🔹 Filter tasks by completed status
+  getTasksByCompletionStatus: async (completed: boolean): Promise<Task[]> => {
+    try {
+      console.log("🔍 Fetching tasks with completion status:", completed);
+      const response = await api.get<Task[]>(`/tasks?completed=${completed}`);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching tasks by completion status:", error);
       throw error;
     }
   },

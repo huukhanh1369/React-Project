@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo } from "react";
-import { Menu, Divider } from "antd";
+import { Menu, Divider, message } from "antd";
 import {
   AppstoreOutlined,
   StarOutlined,
@@ -10,6 +10,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import { setFilterType, setCurrentBoardId } from "../../features/board/BoardSlice";
+import { logout } from "../../features/auth/authSlice";
 import "./layout.css";
 import logo from "../../assets/logo/trello-logo-full.png.png";
 
@@ -62,20 +63,19 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   };
 
   const handleSignOutClick = () => {
-    console.log("Sign out clicked");
-    // Add sign out logic here
+    dispatch(logout());
+    message.success("Đăng xuất thành công!");
+    navigate("/login");
     onClose();
   };
 
   // Get current board title for display
   const getCurrentBoardTitle = useMemo(() => {
     if (!currentBoardId) return "";
-    // Tìm trong boards (không closed)
     const board = boards.find((b: any) => b.id === currentBoardId);
     return board ? board.title : "";
   }, [currentBoardId, boards]);
 
-  // ===== Get board background style =====
   const getBoardBackgroundStyle = (board: any) => {
     if (board.background) {
       return {
@@ -129,7 +129,6 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           </Menu.Item>
         </Menu>
 
-        {/* Divider */}
         <Divider style={{ margin: "12px 0" }} />
 
         {/* Your boards section - only show in BoardView */}
@@ -153,11 +152,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                       onClose();
                     }}
                   >
-                    {/* Board Thumbnail */}
-                    <div
-                      className="board-thumbnail"
-                      style={getBoardBackgroundStyle(board)}
-                    />
+                    <div className="board-thumbnail" style={getBoardBackgroundStyle(board)} />
                     <span className="board-name" title={board.title}>
                       {board.title}
                     </span>

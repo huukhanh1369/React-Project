@@ -17,24 +17,6 @@
   ],
   "boards": [
     {
-      "id": "1761787022180",
-      "title": "fghjk",
-      "color": null,
-      "userId": 1,
-      "createdAt": "2025-10-30T01:17:02.180Z",
-      "background": "/images/Board1.png",
-      "starred": false,
-      "closed": true
-    },
-    {
-      "id": "1761792633840",
-      "title": "kytrew",
-      "background": "/images/Board3.png",
-      "userId": 1,
-      "createdAt": "2025-10-30T02:50:33.840Z",
-      "starred": false
-    },
-    {
       "id": "board_1",
       "title": "khanh",
       "background": "/images/Board1.png",
@@ -50,7 +32,7 @@
       "color": null,
       "userId": 1,
       "createdAt": "2025-10-31T06:59:37.528Z",
-      "starred": false,
+      "starred": true,
       "closed": false,
       "background": "/images/Board4.png"
     },
@@ -289,28 +271,6 @@
       "tags": [],
       "createdAt": "2025-11-01T12:22:17.291Z",
       "updatedAt": "2025-11-01T12:22:18.950Z"
-    },
-    {
-      "id": "task_1761999811544",
-      "title": "rg",
-      "listId": "list_1761999808855",
-      "description": "",
-      "position": "1",
-      "completed": true,
-      "tags": [],
-      "createdAt": "2025-11-01T12:23:31.544Z",
-      "updatedAt": "2025-11-01T12:49:03.927Z"
-    },
-    {
-      "id": "task_1761999821521",
-      "title": "4",
-      "listId": "list_1761999808855",
-      "description": "",
-      "position": "2",
-      "completed": false,
-      "tags": [],
-      "createdAt": "2025-11-01T12:23:41.521Z",
-      "updatedAt": "2025-11-01T12:23:41.521Z"
     },
     {
       "id": "task_1761999869481",
