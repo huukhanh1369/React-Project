@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Button, Dropdown, Menu, Card, Typography, Input, message } from "antd";
+import { useParams } from "react-router-dom"; // ← Thêm dòng này
 import DebugBoardState from "../../../components/DebugBoardState";
 import {
   StarOutlined,
@@ -33,12 +34,18 @@ import "./boardview.css";
 
 const { Title, Text } = Typography;
 
-const BoardView: React.FC<{ boardId?: string }> = ({ boardId = "board_1" }) => {
+const BoardView: React.FC = () => { // ← Xóa { boardId?: string } prop
+  const { boardId } = useParams<{ boardId: string }>(); // ← Thêm dòng này
+  
+  // Fallback nếu boardId không có
+  const actualBoardId = boardId || "board_1";
+
   <DebugBoardState />;
   const dispatch = useDispatch();
   const lists = useSelector((state: any) => state.lists.items);
   const listLoading = useSelector((state: any) => state.lists.loading);
   const tasks = useSelector((state: any) => state.tasks.items);
+  const boards = useSelector((state: any) => state.boards.boards);
 
   console.log("Current lists:", lists);
   console.log("Current tasks:", tasks);
@@ -55,16 +62,13 @@ const BoardView: React.FC<{ boardId?: string }> = ({ boardId = "board_1" }) => {
     }));
     console.table(tasksByList);
   }, [tasks]);
-  const boards = useSelector((state: any) => state.boards.boards);
 
-  // ===== STATE QUẢN LÍ MODAL =====
+  // ===== STATE QUẢN LÝ MODAL =====
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isCloseBoardVisible, setIsCloseBoardVisible] = useState(false);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [selectedCard, setSelectedCard] = useState<any | null>(null);
-  const [boardTitle, setBoardTitle] = useState(
-    "Tổ chức sự kiện Year-end party!"
-  );
+  const [boardTitle, setBoardTitle] = useState("");
   const [isStarred, setIsStarred] = useState(false);
 
   // ===== STATE CHO ADD CARD =====
@@ -83,10 +87,10 @@ const BoardView: React.FC<{ boardId?: string }> = ({ boardId = "board_1" }) => {
   const editListInputRef = useRef<any>(null);
 
   // ===== LOAD BOARDS AND LISTS ON MOUNT =====
-    useEffect(() => {
+  useEffect(() => {
     const loadData = async () => {
       try {
-        console.log("🔄 Starting to load board data for boardId:", boardId);
+        console.log("📄 Starting to load board data for boardId:", actualBoardId); // ← Thay đổi
 
         // Load boards
         const userId = 1;
@@ -96,20 +100,21 @@ const BoardView: React.FC<{ boardId?: string }> = ({ boardId = "board_1" }) => {
         const allBoards = boardsResult.payload;
         if (allBoards && Array.isArray(allBoards)) {
           const currentBoard = allBoards.find(
-            (b: any) => b.id === boardId
+            (b: any) => b.id === actualBoardId // ← Thay đổi
           );
           if (currentBoard) {
             console.log("✅ Found board:", currentBoard.title);
             setBoardTitle(currentBoard.title);
             setIsStarred(currentBoard.starred || false);
           } else {
-            console.warn("⚠️ Board not found:", boardId);
+            console.warn("⚠️ Board not found:", actualBoardId); // ← Thay đổi
+            setBoardTitle(""); // Reset title nếu không tìm thấy
           }
         }
 
         // Load lists
-        console.log("📋 Fetching lists for board:", boardId);
-        const listsResult = await dispatch(fetchListsByBoardId(boardId) as any);
+        console.log("📋 Fetching lists for board:", actualBoardId); // ← Thay đổi
+        const listsResult = await dispatch(fetchListsByBoardId(actualBoardId) as any); // ← Thay đổi
 
         if (
           listsResult &&
@@ -139,7 +144,7 @@ const BoardView: React.FC<{ boardId?: string }> = ({ boardId = "board_1" }) => {
     };
 
     loadData();
-  }, [dispatch, boardId]);
+  }, [dispatch, actualBoardId]); // ← Thay đổi dependency
 
   // ===== Focus input khi thêm card =====
   useEffect(() => {
@@ -175,13 +180,12 @@ const BoardView: React.FC<{ boardId?: string }> = ({ boardId = "board_1" }) => {
   const handleCloseFilter = () => setIsFilterOpen(false);
 
   // ===== HANDLE STAR BOARD =====
-  // ===== HANDLE STAR BOARD =====
   const handleToggleStar = async () => {
     try {
-      const currentBoard = boards.find((b: any) => b.id === boardId);
+      const currentBoard = boards.find((b: any) => b.id === actualBoardId); // ← Thay đổi
       if (currentBoard) {
         const newStarredStatus = !isStarred;
-        
+
         // Dispatch update to Redux
         await dispatch(
           updateBoard({
@@ -189,15 +193,15 @@ const BoardView: React.FC<{ boardId?: string }> = ({ boardId = "board_1" }) => {
             starred: newStarredStatus,
           }) as any
         );
-        
+
         // Update local state
         setIsStarred(newStarredStatus);
-        
+
         // Show success message
         message.success(
           newStarredStatus ? "⭐ Board starred!" : "☆ Star removed from board!"
         );
-        
+
         console.log(`✅ Board starred status updated to: ${newStarredStatus}`);
       }
     } catch (error) {
@@ -209,7 +213,7 @@ const BoardView: React.FC<{ boardId?: string }> = ({ boardId = "board_1" }) => {
   // ===== HANDLE CLOSE BOARD =====
   const handleCloseBoard = async () => {
     try {
-      const currentBoard = boards.find((b: any) => b.id === boardId);
+      const currentBoard = boards.find((b: any) => b.id === actualBoardId); // ← Thay đổi
       if (currentBoard) {
         // Dispatch update to close board
         await dispatch(
@@ -218,16 +222,16 @@ const BoardView: React.FC<{ boardId?: string }> = ({ boardId = "board_1" }) => {
             closed: true,
           }) as any
         );
-        
+
         // Show success message
         message.success("Board closed successfully!");
-        
+
         // Redirect to dashboard
         setTimeout(() => {
           window.location.href = "/dashboard";
         }, 1000);
-        
-        console.log(`✅ Board ${boardId} closed`);
+
+        console.log(`✅ Board ${actualBoardId} closed`); // ← Thay đổi
       }
     } catch (error) {
       console.error("Error closing board:", error);
@@ -284,7 +288,7 @@ const BoardView: React.FC<{ boardId?: string }> = ({ boardId = "board_1" }) => {
         await dispatch(
           createList({
             title: newListName.trim(),
-            boardId,
+            boardId: actualBoardId, // ← Thay đổi
           }) as any
         );
         message.success("List added successfully!");
@@ -400,7 +404,7 @@ const BoardView: React.FC<{ boardId?: string }> = ({ boardId = "board_1" }) => {
           <div className="board-header">
             <div className="board-header-left">
               <Title level={2} className="board-title">
-                {boardTitle}
+                {boardTitle || "Loading board..."}
               </Title>
 
               <div className="board-actions-group">

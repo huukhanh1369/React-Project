@@ -21,6 +21,7 @@ export interface Board {
 // =========================
 interface BoardState {
   boards: Board[];
+  allBoards: Board[];  // ← Thêm allBoards (bao gồm closed)
   starredBoards: Board[];
   closedBoards: Board[];
   loading: boolean;
@@ -31,6 +32,7 @@ interface BoardState {
 
 const initialState: BoardState = {
   boards: [],
+  allBoards: [],  // ← Thêm allBoards
   starredBoards: [],
   closedBoards: [],
   loading: false,
@@ -127,6 +129,7 @@ const boardSlice = createSlice({
         state.error = null;
       })
       .addCase(fetchBoards.fulfilled, (state, action) => {
+        state.allBoards = action.payload;  // ← Lưu tất cả boards
         state.boards = action.payload.filter((b) => !b.closed);
         state.starredBoards = action.payload.filter((b) => b.starred && !b.closed);
         state.closedBoards = action.payload.filter((b) => b.closed);

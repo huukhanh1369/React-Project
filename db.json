@@ -35,7 +35,7 @@
     },
     {
       "id": "board_1",
-      "title": "Tổ chức sự kiện Year-end party!",
+      "title": "khanh",
       "background": "/images/Board1.png",
       "userId": 1,
       "createdAt": "2025-10-30T02:50:33.840Z",
@@ -64,10 +64,20 @@
     },
     {
       "id": "1761998683293",
-      "title": "kahnh",
+      "title": "khanh",
       "color": "#00c853",
       "userId": 1,
       "createdAt": "2025-11-01T12:04:43.293Z",
+      "starred": false,
+      "closed": true,
+      "background": null
+    },
+    {
+      "id": "1761999794758",
+      "title": "rtg",
+      "color": "#2196f3",
+      "userId": 1,
+      "createdAt": "2025-11-01T12:23:14.758Z",
       "starred": false,
       "closed": false
     }
@@ -99,6 +109,33 @@
       "order": 3,
       "createdAt": "2025-10-30T02:48:29.642Z",
       "updatedAt": "2025-10-31T07:19:19.173Z"
+    },
+    {
+      "id": "list_1761999733549",
+      "title": "ề",
+      "boardId": "1761998683293",
+      "tasks": [],
+      "order": 1,
+      "createdAt": "2025-11-01T12:22:13.549Z",
+      "updatedAt": "2025-11-01T12:22:13.549Z"
+    },
+    {
+      "id": "list_1761999808855",
+      "title": "rg",
+      "boardId": "1761999794758",
+      "tasks": [],
+      "order": 1,
+      "createdAt": "2025-11-01T12:23:28.855Z",
+      "updatedAt": "2025-11-01T12:23:28.855Z"
+    },
+    {
+      "id": "list_1761999866730",
+      "title": "rf",
+      "boardId": "1761787022180",
+      "tasks": [],
+      "order": 1,
+      "createdAt": "2025-11-01T12:24:26.730Z",
+      "updatedAt": "2025-11-01T12:24:26.731Z"
     }
   ],
   "tasks": [
@@ -211,6 +248,61 @@
       "tags": [],
       "createdAt": "2025-10-31T00:03:46.508Z",
       "updatedAt": "2025-10-31T00:03:46.508Z"
+    },
+    {
+      "id": "task_1761999735696",
+      "title": "è",
+      "listId": "list_1761999733549",
+      "description": "",
+      "position": "1",
+      "completed": true,
+      "tags": [],
+      "createdAt": "2025-11-01T12:22:15.696Z",
+      "updatedAt": "2025-11-01T12:22:17.907Z"
+    },
+    {
+      "id": "task_1761999737291",
+      "title": "è",
+      "listId": "list_1761999733549",
+      "description": "",
+      "position": "2",
+      "completed": true,
+      "tags": [],
+      "createdAt": "2025-11-01T12:22:17.291Z",
+      "updatedAt": "2025-11-01T12:22:18.950Z"
+    },
+    {
+      "id": "task_1761999811544",
+      "title": "rg",
+      "listId": "list_1761999808855",
+      "description": "",
+      "position": "1",
+      "completed": false,
+      "tags": [],
+      "createdAt": "2025-11-01T12:23:31.544Z",
+      "updatedAt": "2025-11-01T12:23:31.544Z"
+    },
+    {
+      "id": "task_1761999821521",
+      "title": "4",
+      "listId": "list_1761999808855",
+      "description": "",
+      "position": "2",
+      "completed": false,
+      "tags": [],
+      "createdAt": "2025-11-01T12:23:41.521Z",
+      "updatedAt": "2025-11-01T12:23:41.521Z"
+    },
+    {
+      "id": "task_1761999869481",
+      "title": "rg",
+      "listId": "list_1761999866730",
+      "description": "",
+      "position": "1",
+      "completed": false,
+      "tags": [],
+      "createdAt": "2025-11-01T12:24:29.481Z",
+      "updatedAt": "2025-11-01T12:24:29.481Z"
     }
   ],
   "tags": [

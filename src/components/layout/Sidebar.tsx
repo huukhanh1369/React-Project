@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { Menu, Divider } from "antd";
 import {
   AppstoreOutlined,
@@ -25,6 +25,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const filterType = useSelector((state: any) => state.boards.filterType);
   const boards = useSelector((state: any) => state.boards.boards);
   const currentBoardId = useSelector((state: any) => state.boards.currentBoardId);
+  const allBoards = useSelector((state: any) => state.boards.allBoards);
 
   // Check if we're in BoardView
   const isBoardView = location.pathname.includes("/board/");
@@ -34,9 +35,10 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
     const pathParts = location.pathname.split("/");
     const boardId = pathParts[pathParts.length - 1];
     if (isBoardView && boardId) {
+      console.log("🔄 Sidebar: Updating currentBoardId to:", boardId);
       dispatch(setCurrentBoardId(boardId));
     }
-  }, [location, dispatch, isBoardView]);
+  }, [location.pathname, dispatch, isBoardView]);
 
   const handleMenuClick = (key: string) => {
     if (key === "1") {
@@ -64,6 +66,14 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
     // Add sign out logic here
     onClose();
   };
+
+  // Get current board title for display
+  const getCurrentBoardTitle = useMemo(() => {
+    if (!currentBoardId) return "";
+    // Tìm trong boards (không closed)
+    const board = boards.find((b: any) => b.id === currentBoardId);
+    return board ? board.title : "";
+  }, [currentBoardId, boards]);
 
   return (
     <>
@@ -106,26 +116,38 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
         {/* Your boards section - only show in BoardView */}
         {isBoardView && (
           <>
-            <div className="sidebar-section-title">Your Boards</div>
+            <div className="sidebar-section-title">
+              Your Boards {getCurrentBoardTitle && `(${getCurrentBoardTitle})`}
+            </div>
             <div className="sidebar-boards-list">
-              {boards.map((board: any) => (
-                <div
-                  key={board.id}
-                  className={`sidebar-board-item ${
-                    currentBoardId === board.id ? "active" : ""
-                  }`}
-                  onClick={() => {
-                    navigate(`/board/${board.id}`);
-                    onClose();
-                  }}
-                >
+              {boards && boards.length > 0 ? (
+                boards.map((board: any) => (
                   <div
-                    className="board-color"
-                    style={{ backgroundColor: board.color || "#0079BF" }}
-                  />
-                  <span className="board-name">{board.title}</span>
-                </div>
-              ))}
+                    key={board.id}
+                    className={`sidebar-board-item ${
+                      currentBoardId === board.id ? "active" : ""
+                    }`}
+                    onClick={() => {
+                      console.log("🔄 Navigating to board:", board.id, board.title);
+                      dispatch(setCurrentBoardId(board.id));
+                      navigate(`/board/${board.id}`);
+                      onClose();
+                    }}
+                  >
+                    <div
+                      className="board-color"
+                      style={{ backgroundColor: board.color || "#0079BF" }}
+                    />
+                    <span className="board-name" title={board.title}>
+                      {board.title}
+                    </span>
+                  </div>
+                ))
+              ) : (
+                <p style={{ fontSize: "12px", color: "#999", padding: "8px" }}>
+                  No boards available
+                </p>
+              )}
             </div>
             <Divider style={{ margin: "12px 0" }} />
           </>

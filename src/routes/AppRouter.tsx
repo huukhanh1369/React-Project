@@ -28,7 +28,7 @@ const AppRouter: React.FC = () => {
 
         {/* Trang chi tiết từng board */}
         <Route
-          path="/board/:id"
+          path="/board/:boardId"
           element={
             <ProtectedRoute>
               <BoardView />
