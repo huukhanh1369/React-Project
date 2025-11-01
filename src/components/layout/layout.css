@@ -60,7 +60,90 @@
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
+/* ===========================
+   SIDEBAR BOARDS LIST (ở BoardView)
+=========================== */
+/* ===========================
+   SIDEBAR BOARDS LIST (ở BoardView)
+=========================== */
+.sidebar-boards-list {
+  padding: 0 8px;
+  max-height: 200px;
+  overflow-y: auto;
+}
 
+.sidebar-board-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  margin-bottom: 4px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.sidebar-board-item:hover {
+  background-color: #f3f4f6;
+  transform: translateX(2px);
+}
+
+.sidebar-board-item.active {
+  background-color: #e0e7ff;
+  border-left: 3px solid #0D6EFD;
+  padding-left: 9px;
+}
+
+.sidebar-board-item .board-color {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.sidebar-board-item .board-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: #374151;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+}
+
+/* Scrollbar styling */
+.sidebar-boards-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar-boards-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar-boards-list::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 3px;
+}
+
+.sidebar-boards-list::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+/* áº¨n sidebar khi mobile, trÆ°á»£t tá»« pháº£i ra */
+@media (max-width: 768px) {
+  .sidebar {
+    left: auto;
+    right: 0;
+    transform: translateX(100%);
+    width: 260px;
+    box-shadow: -2px 0 12px rgba(0, 0, 0, 0.15);
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+}
 /* ===========================
    MENU STYLING
 =========================== */

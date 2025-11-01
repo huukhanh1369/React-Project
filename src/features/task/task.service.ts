@@ -6,9 +6,12 @@ export const taskService = {
   // Lấy tất cả tasks của một list
   getTasksByListId: async (listId: string): Promise<Task[]> => {
     try {
+      console.log("Fetching tasks for listId:", listId);
       const response = await fetch(`${API_URL}/tasks?listId=${listId}`);
       if (!response.ok) throw new Error("Failed to fetch tasks");
-      return await response.json();
+      const data = await response.json();
+      console.log("Tasks fetched for list", listId, ":", data);
+      return data;
     } catch (error) {
       console.error("Error fetching tasks:", error);
       throw error;
@@ -30,6 +33,10 @@ export const taskService = {
   // Tạo task mới
   createTask: async (payload: CreateTaskPayload): Promise<Task> => {
     try {
+      // Lấy số tasks hiện tại trong list để set position
+      const tasksInList = await taskService.getTasksByListId(payload.listId);
+      const position = String(tasksInList.length + 1);
+
       const response = await fetch(`${API_URL}/tasks`, {
         method: "POST",
         headers: {
@@ -38,6 +45,8 @@ export const taskService = {
         body: JSON.stringify({
           id: `task_${Date.now()}`,
           ...payload,
+          description: "",
+          position: position,
           completed: false,
           tags: [],
           createdAt: new Date().toISOString(),
@@ -52,7 +61,7 @@ export const taskService = {
     }
   },
 
-  // Cập nhật task
+  // Cập nhật task (bao gồm title, description, listId, position)
   updateTask: async (payload: UpdateTaskPayload): Promise<Task> => {
     try {
       const response = await fetch(`${API_URL}/tasks/${payload.id}`, {
@@ -87,7 +96,10 @@ export const taskService = {
   },
 
   // Toggle completed status
-  toggleTaskCompletion: async (taskId: string, completed: boolean): Promise<Task> => {
+  toggleTaskCompletion: async (
+    taskId: string,
+    completed: boolean
+  ): Promise<Task> => {
     try {
       const response = await fetch(`${API_URL}/tasks/${taskId}`, {
         method: "PATCH",

@@ -22,72 +22,115 @@
       "color": null,
       "userId": 1,
       "createdAt": "2025-10-30T01:17:02.180Z",
-      "background": "/images/Board1.png"
+      "background": "/images/Board1.png",
+      "starred": false
     },
     {
       "id": "1761792633840",
       "title": "kytrew",
       "background": "/images/Board3.png",
       "userId": 1,
-      "createdAt": "2025-10-30T02:50:33.840Z"
+      "createdAt": "2025-10-30T02:50:33.840Z",
+      "starred": false
+    },
+    {
+      "id": "board_1",
+      "title": "Tổ chức sự kiện Year-end party!",
+      "background": "/images/Board1.png",
+      "userId": 1,
+      "createdAt": "2025-10-30T02:50:33.840Z",
+      "starred": false,
+      "closed": true,
+      "color": null
+    },
+    {
+      "id": "1761893977528",
+      "title": "edddddddd",
+      "color": null,
+      "userId": 1,
+      "createdAt": "2025-10-31T06:59:37.528Z",
+      "starred": false,
+      "closed": false,
+      "background": "/images/Board4.png"
+    },
+    {
+      "id": "1761894785116",
+      "title": "dfghjk",
+      "color": "#e91e63",
+      "userId": 1,
+      "createdAt": "2025-10-31T07:13:05.116Z",
+      "starred": false,
+      "closed": true
+    },
+    {
+      "id": "1761998683293",
+      "title": "kahnh",
+      "color": "#00c853",
+      "userId": 1,
+      "createdAt": "2025-11-01T12:04:43.293Z",
+      "starred": false,
+      "closed": false
     }
   ],
   "lists": [
     {
       "id": "list_1",
-      "title": "Todo",
+      "title": "erg",
       "boardId": "board_1",
       "order": 1,
       "tasks": [],
       "createdAt": "2025-01-01T00:00:00Z",
-      "updatedAt": "2025-10-30T02:49:50.797Z"
+      "updatedAt": "2025-10-31T07:35:18.176Z"
     },
     {
       "id": "list_2",
-      "title": "khanh",
+      "title": "In-progress",
       "boardId": "board_1",
       "order": 2,
       "tasks": [],
       "createdAt": "2025-01-01T00:00:00Z",
-      "updatedAt": "2025-10-30T02:49:58.392Z"
+      "updatedAt": "2025-10-31T07:36:26.737Z"
     },
     {
       "id": "list_1761792509642",
-      "title": "fdrhy",
+      "title": "Done",
       "boardId": "board_1",
       "tasks": [],
       "order": 3,
       "createdAt": "2025-10-30T02:48:29.642Z",
-      "updatedAt": "2025-10-30T02:51:55.773Z"
+      "updatedAt": "2025-10-31T07:19:19.173Z"
     }
   ],
   "tasks": [
     {
       "id": "task_1",
-      "title": "Thuê DJ",
-      "description": "Liên hệ DJ cho sự kiện",
-      "completed": true,
-      "listId": "list_1",
+      "title": "kahnhhhhhhhhhhhhh",
+      "description": "<p>Li&ecirc;n hệ DJ chuy&ecirc;n nghiệp cho sự kiện</p>",
+      "completed": false,
+      "listId": "list_1761792509642",
+      "position": "1",
       "tags": [],
       "createdAt": "2025-01-01T00:00:00Z",
-      "updatedAt": "2025-01-01T00:00:00Z"
+      "updatedAt": "2025-10-31T07:14:56.933Z"
     },
     {
       "id": "task_2",
-      "title": "Lên kịch bản chương trình",
-      "description": "Viết timeline chi tiết cho MC",
+      "title": "d",
+      "description": "<p>Viết timeline chi tiết cho MC, bao gồm c&aacute;c phần giải tr&iacute; v&agrave; ph&aacute;t biểu</p>",
       "completed": true,
       "listId": "list_1",
+      "position": "2",
       "tags": [],
       "createdAt": "2025-01-01T00:00:00Z",
-      "updatedAt": "2025-01-01T00:00:00Z"
+      "updatedAt": "2025-10-31T07:32:08.871Z"
     },
     {
       "id": "task_3",
       "title": "Chuẩn bị kịch bản",
-      "description": "Soạn kịch bản cho từng tiết mục",
+      "description": "<p>Soạn kịch bản chi tiết cho từng tiết mục</p>",
       "completed": false,
       "listId": "list_1",
+      "position": "3",
       "tags": [],
       "createdAt": "2025-01-01T00:00:00Z",
       "updatedAt": "2025-01-01T00:00:00Z"
@@ -95,37 +138,42 @@
     {
       "id": "task_4",
       "title": "Kịch bản",
-      "description": "Kịch bản tổng duyệt",
+      "description": "<p>m</p>",
       "completed": true,
       "listId": "list_1",
+      "position": "4",
       "tags": [],
       "createdAt": "2025-01-01T00:00:00Z",
-      "updatedAt": "2025-01-01T00:00:00Z"
+      "updatedAt": "2025-10-31T07:35:08.711Z"
     },
     {
       "id": "task_5",
       "title": "Thuê MC",
-      "description": "Liên hệ MC chính cho sự kiện",
+      "description": "<p>Li&ecirc;n hệ MC ch&iacute;nh thức cho sự kiện, đ&agrave;m ph&aacute;n về gi&aacute; cả v&agrave; thời gian</p>",
       "completed": false,
       "listId": "list_1",
+      "position": "6",
       "tags": [],
       "createdAt": "2025-01-01T00:00:00Z",
-      "updatedAt": "2025-01-01T00:00:00Z"
+      "updatedAt": "2025-10-31T04:46:52.625Z"
     },
     {
       "id": "task_6",
       "title": "Setup sân khấu",
-      "description": "Dựng sân khấu, âm thanh, ánh sáng",
-      "completed": false,
+      "description": "<p>Dựng s&acirc;n khấu, kiểm tra &acirc;m thanh v&agrave; &aacute;nh s&aacute;ng</p>",
+      "completed": true,
       "listId": "list_2",
+      "position": "1",
       "tags": [],
       "createdAt": "2025-01-01T00:00:00Z",
-      "updatedAt": "2025-01-01T00:00:00Z"
+      "updatedAt": "2025-10-31T07:08:39.932Z"
     },
     {
       "id": "task_1761792514108",
       "title": "hcfhbxcb",
+      "description": "",
       "listId": "list_1761792509642",
+      "position": "1",
       "completed": true,
       "tags": [],
       "createdAt": "2025-10-30T02:48:34.108Z",
@@ -134,7 +182,9 @@
     {
       "id": "task_1761869021651",
       "title": "thinh",
+      "description": "",
       "listId": "list_1",
+      "position": "6",
       "completed": false,
       "tags": [],
       "createdAt": "2025-10-31T00:03:41.651Z",
@@ -143,7 +193,9 @@
     {
       "id": "task_1761869024480",
       "title": "khanh",
+      "description": "",
       "listId": "list_1",
+      "position": "7",
       "completed": false,
       "tags": [],
       "createdAt": "2025-10-31T00:03:44.480Z",
@@ -152,7 +204,9 @@
     {
       "id": "task_1761869026508",
       "title": "tri",
+      "description": "",
       "listId": "list_1",
+      "position": "8",
       "completed": false,
       "tags": [],
       "createdAt": "2025-10-31T00:03:46.508Z",

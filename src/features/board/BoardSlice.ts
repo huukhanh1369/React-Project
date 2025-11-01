@@ -13,6 +13,7 @@ export interface Board {
   userId: number;
   closed?: boolean;
   started?: boolean;
+  starred?: boolean;
 }
 
 // =========================
@@ -20,21 +21,27 @@ export interface Board {
 // =========================
 interface BoardState {
   boards: Board[];
+  starredBoards: Board[];
+  closedBoards: Board[];
   loading: boolean;
   error: string | null;
+  filterType: "all" | "starred" | "closed";
+  currentBoardId?: string;
 }
 
 const initialState: BoardState = {
   boards: [],
+  starredBoards: [],
+  closedBoards: [],
   loading: false,
   error: null,
+  filterType: "all",
 };
 
 // =========================
 // 📋 Thunks
 // =========================
 
-// ✅ Fetch all boards by userId
 export const fetchBoards = createAsyncThunk(
   "boards/fetchBoards",
   async (userId: number, { rejectWithValue }) => {
@@ -47,7 +54,6 @@ export const fetchBoards = createAsyncThunk(
   }
 );
 
-// ✅ Add new board
 export const addBoard = createAsyncThunk(
   "boards/addBoard",
   async (board: Omit<Board, "id" | "createdAt">, { rejectWithValue }) => {
@@ -56,27 +62,27 @@ export const addBoard = createAsyncThunk(
         ...board,
         id: String(Date.now()),
         createdAt: new Date().toISOString(),
+        starred: false,
+        closed: false,
       };
       const response = await api.post<Board>("/boards", newBoard);
-      return response.data;p
+      return response.data;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || "Failed to add board");
     }
   }
 );
 
-// ✅ Update board (send null to delete unused field: background OR color)
 export const updateBoard = createAsyncThunk(
   "boards/updateBoard",
   async (board: Board, { rejectWithValue }) => {
     try {
       const updateData: any = { ...board };
 
-      // Only keep one: background OR color
       if (board.background) {
-        updateData.color = null; // Send null to delete color field
+        updateData.color = null;
       } else if (board.color) {
-        updateData.background = null; // Send null to delete background field
+        updateData.background = null;
       }
 
       const response = await api.patch<Board>(`/boards/${board.id}`, updateData);
@@ -87,7 +93,6 @@ export const updateBoard = createAsyncThunk(
   }
 );
 
-// ✅ Delete board
 export const deleteBoard = createAsyncThunk(
   "boards/deleteBoard",
   async (id: string, { rejectWithValue }) => {
@@ -106,7 +111,14 @@ export const deleteBoard = createAsyncThunk(
 const boardSlice = createSlice({
   name: "boards",
   initialState,
-  reducers: {},
+  reducers: {
+    setFilterType: (state, action) => {
+      state.filterType = action.payload;
+    },
+    setCurrentBoardId: (state, action) => {
+      state.currentBoardId = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     builder
       // --- FETCH ---
@@ -115,7 +127,9 @@ const boardSlice = createSlice({
         state.error = null;
       })
       .addCase(fetchBoards.fulfilled, (state, action) => {
-        state.boards = action.payload;
+        state.boards = action.payload.filter((b) => !b.closed);
+        state.starredBoards = action.payload.filter((b) => b.starred && !b.closed);
+        state.closedBoards = action.payload.filter((b) => b.closed);
         state.loading = false;
       })
       .addCase(fetchBoards.rejected, (state, action) => {
@@ -134,8 +148,37 @@ const boardSlice = createSlice({
       // --- UPDATE ---
       .addCase(updateBoard.fulfilled, (state, action) => {
         const index = state.boards.findIndex((b) => b.id === action.payload.id);
-        if (index !== -1) {
-          state.boards[index] = action.payload;
+        const starredIndex = state.starredBoards.findIndex((b) => b.id === action.payload.id);
+        const closedIndex = state.closedBoards.findIndex((b) => b.id === action.payload.id);
+
+        // Handle closed status
+        if (action.payload.closed) {
+          // Remove from boards and starredBoards, add to closedBoards
+          if (index !== -1) state.boards.splice(index, 1);
+          if (starredIndex !== -1) state.starredBoards.splice(starredIndex, 1);
+          if (!state.closedBoards.find((b) => b.id === action.payload.id)) {
+            state.closedBoards.push(action.payload);
+          }
+        } else {
+          // Remove from closedBoards, add back to boards
+          if (closedIndex !== -1) state.closedBoards.splice(closedIndex, 1);
+          if (index === -1) {
+            state.boards.push(action.payload);
+          } else {
+            state.boards[index] = action.payload;
+          }
+        }
+
+        // Handle starred status
+        if (action.payload.starred && !action.payload.closed) {
+          if (!state.starredBoards.find((b) => b.id === action.payload.id)) {
+            state.starredBoards.push(action.payload);
+          } else {
+            const idx = state.starredBoards.findIndex((b) => b.id === action.payload.id);
+            if (idx !== -1) state.starredBoards[idx] = action.payload;
+          }
+        } else {
+          state.starredBoards = state.starredBoards.filter((b) => b.id !== action.payload.id);
         }
       })
       .addCase(updateBoard.rejected, (state, action) => {
@@ -145,6 +188,8 @@ const boardSlice = createSlice({
       // --- DELETE ---
       .addCase(deleteBoard.fulfilled, (state, action) => {
         state.boards = state.boards.filter((b) => b.id !== action.payload);
+        state.starredBoards = state.starredBoards.filter((b) => b.id !== action.payload);
+        state.closedBoards = state.closedBoards.filter((b) => b.id !== action.payload);
       })
       .addCase(deleteBoard.rejected, (state, action) => {
         state.error = (action.payload as string) || "Failed to delete board";
@@ -152,4 +197,5 @@ const boardSlice = createSlice({
   },
 });
 
+export const { setFilterType, setCurrentBoardId } = boardSlice.actions;
 export default boardSlice.reducer;

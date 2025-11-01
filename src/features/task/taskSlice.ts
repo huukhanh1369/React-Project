@@ -77,7 +77,31 @@ const taskSlice = createSlice({
       })
       .addCase(fetchTasksByListId.fulfilled, (state, action) => {
         state.loading = false;
-        state.items = action.payload;
+        const newTasks = action.payload;
+        
+        if (newTasks.length === 0) {
+          console.log("📭 No tasks for this list");
+          return;
+        }
+        
+        // Lấy listId từ task đầu tiên
+        const listId = newTasks[0].listId;
+        
+        // ✅ MERGE: Xóa tasks cũ từ list này, giữ lại tasks từ lists khác
+        state.items = state.items.filter((t: any) => t.listId !== listId);
+        
+        // Thêm tasks mới vào
+        state.items = [...state.items, ...newTasks];
+        
+        console.log(`✅ Merged tasks for list ${listId}`);
+        console.log(`   Total tasks in store: ${state.items.length}`);
+        
+        // Log breakdown
+        const breakdown: any = {};
+        state.items.forEach((t: any) => {
+          breakdown[t.listId] = (breakdown[t.listId] || 0) + 1;
+        });
+        console.log("   Breakdown:", breakdown);
       })
       .addCase(fetchTasksByListId.rejected, (state, action) => {
         state.loading = false;

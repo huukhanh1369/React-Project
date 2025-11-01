@@ -3,6 +3,7 @@ import { Button, Dropdown, Menu, Card, Typography, Input, message } from "antd";
 import DebugBoardState from "../../../components/DebugBoardState";
 import {
   StarOutlined,
+  StarFilled,
   FilterOutlined,
   FileTextOutlined,
   TableOutlined,
@@ -27,22 +28,44 @@ import {
   createTask,
   toggleTaskCompletion,
 } from "../../../features/task/taskSlice";
+import { fetchBoards, updateBoard } from "../../../features/board/BoardSlice";
 import "./boardview.css";
 
 const { Title, Text } = Typography;
 
 const BoardView: React.FC<{ boardId?: string }> = ({ boardId = "board_1" }) => {
-  <DebugBoardState />
+  <DebugBoardState />;
   const dispatch = useDispatch();
   const lists = useSelector((state: any) => state.lists.items);
   const listLoading = useSelector((state: any) => state.lists.loading);
   const tasks = useSelector((state: any) => state.tasks.items);
+
+  console.log("Current lists:", lists);
+  console.log("Current tasks:", tasks);
+  console.log("List loading:", listLoading);
+
+  // Debug: log tasks khi thay đổi
+  useEffect(() => {
+    console.log("📊 Tasks state updated. Total tasks:", tasks.length);
+    console.log("   Tasks by list:");
+    const tasksByList = lists.map((list: any) => ({
+      listId: list.id,
+      listName: list.title,
+      count: tasks.filter((t: any) => t.listId === list.id).length,
+    }));
+    console.table(tasksByList);
+  }, [tasks]);
+  const boards = useSelector((state: any) => state.boards.boards);
 
   // ===== STATE QUẢN LÍ MODAL =====
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isCloseBoardVisible, setIsCloseBoardVisible] = useState(false);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [selectedCard, setSelectedCard] = useState<any | null>(null);
+  const [boardTitle, setBoardTitle] = useState(
+    "Tổ chức sự kiện Year-end party!"
+  );
+  const [isStarred, setIsStarred] = useState(false);
 
   // ===== STATE CHO ADD CARD =====
   const [addingCardToList, setAddingCardToList] = useState<string | null>(null);
@@ -59,21 +82,62 @@ const BoardView: React.FC<{ boardId?: string }> = ({ boardId = "board_1" }) => {
   const [editListName, setEditListName] = useState("");
   const editListInputRef = useRef<any>(null);
 
-  // ===== LOAD LISTS ON MOUNT =====
-  useEffect(() => {
+  // ===== LOAD BOARDS AND LISTS ON MOUNT =====
+    useEffect(() => {
     const loadData = async () => {
       try {
-        const result = await dispatch(fetchListsByBoardId(boardId) as any);
-        // Load tasks cho tất cả lists
-        if (result && result.payload) {
-          result.payload.forEach((list: any) => {
-            dispatch(fetchTasksByListId(list.id) as any);
-          });
+        console.log("🔄 Starting to load board data for boardId:", boardId);
+
+        // Load boards
+        const userId = 1;
+        const boardsResult = await dispatch(fetchBoards(userId) as any);
+
+        // Từ allBoards (bao gồm cả closed), tìm board hiện tại
+        const allBoards = boardsResult.payload;
+        if (allBoards && Array.isArray(allBoards)) {
+          const currentBoard = allBoards.find(
+            (b: any) => b.id === boardId
+          );
+          if (currentBoard) {
+            console.log("✅ Found board:", currentBoard.title);
+            setBoardTitle(currentBoard.title);
+            setIsStarred(currentBoard.starred || false);
+          } else {
+            console.warn("⚠️ Board not found:", boardId);
+          }
+        }
+
+        // Load lists
+        console.log("📋 Fetching lists for board:", boardId);
+        const listsResult = await dispatch(fetchListsByBoardId(boardId) as any);
+
+        if (
+          listsResult &&
+          listsResult.payload &&
+          Array.isArray(listsResult.payload)
+        ) {
+          console.log(
+            "✅ Lists loaded:",
+            listsResult.payload.map((l: any) => ({ id: l.id, title: l.title }))
+          );
+
+          // Load tasks cho từng list tuần tự
+          for (const list of listsResult.payload) {
+            console.log(
+              `📥 Fetching tasks for list: ${list.id} (${list.title})`
+            );
+            await dispatch(fetchTasksByListId(list.id) as any);
+            // Thêm delay nhỏ để Redux update kịp
+            await new Promise((resolve) => setTimeout(resolve, 100));
+          }
+
+          console.log("✅ All tasks loaded!");
         }
       } catch (error) {
-        console.error("Error loading board:", error);
+        console.error("❌ Error loading board:", error);
       }
     };
+
     loadData();
   }, [dispatch, boardId]);
 
@@ -105,14 +169,71 @@ const BoardView: React.FC<{ boardId?: string }> = ({ boardId = "board_1" }) => {
 
   // ===== HANDLE CLOSE BOARD =====
   const handleOpenCloseBoard = () => setIsCloseBoardVisible(true);
-  const handleCloseBoard = () => {
-    setIsCloseBoardVisible(false);
-    console.log("✅ Board closed!");
-  };
 
   // ===== HANDLE FILTER BOARD =====
   const handleOpenFilter = () => setIsFilterOpen(true);
   const handleCloseFilter = () => setIsFilterOpen(false);
+
+  // ===== HANDLE STAR BOARD =====
+  // ===== HANDLE STAR BOARD =====
+  const handleToggleStar = async () => {
+    try {
+      const currentBoard = boards.find((b: any) => b.id === boardId);
+      if (currentBoard) {
+        const newStarredStatus = !isStarred;
+        
+        // Dispatch update to Redux
+        await dispatch(
+          updateBoard({
+            ...currentBoard,
+            starred: newStarredStatus,
+          }) as any
+        );
+        
+        // Update local state
+        setIsStarred(newStarredStatus);
+        
+        // Show success message
+        message.success(
+          newStarredStatus ? "⭐ Board starred!" : "☆ Star removed from board!"
+        );
+        
+        console.log(`✅ Board starred status updated to: ${newStarredStatus}`);
+      }
+    } catch (error) {
+      console.error("Error updating star status:", error);
+      message.error("Failed to update star status");
+    }
+  };
+
+  // ===== HANDLE CLOSE BOARD =====
+  const handleCloseBoard = async () => {
+    try {
+      const currentBoard = boards.find((b: any) => b.id === boardId);
+      if (currentBoard) {
+        // Dispatch update to close board
+        await dispatch(
+          updateBoard({
+            ...currentBoard,
+            closed: true,
+          }) as any
+        );
+        
+        // Show success message
+        message.success("Board closed successfully!");
+        
+        // Redirect to dashboard
+        setTimeout(() => {
+          window.location.href = "/dashboard";
+        }, 1000);
+        
+        console.log(`✅ Board ${boardId} closed`);
+      }
+    } catch (error) {
+      console.error("Error closing board:", error);
+      message.error("Failed to close board");
+    }
+  };
 
   // ===== HANDLE ADD CARD =====
   const handleAddCardClick = (listId: string) => {
@@ -226,7 +347,10 @@ const BoardView: React.FC<{ boardId?: string }> = ({ boardId = "board_1" }) => {
   };
 
   // ===== HANDLE CARD CLICK =====
-  const handleCardClick = (card: any) => setSelectedCard(card);
+  const handleCardClick = (card: any) => {
+    console.log("Card clicked:", card);
+    setSelectedCard(card);
+  };
   const handleCloseDetailModal = () => setSelectedCard(null);
 
   // ===== HANDLE TOGGLE TASK COMPLETION =====
@@ -243,9 +367,10 @@ const BoardView: React.FC<{ boardId?: string }> = ({ boardId = "board_1" }) => {
     }
   };
 
-  // ===== GET TASKS BY LIST =====
+  // ===== GET TASKS BY LIST - MEMOIZED =====
   const getTasksByListId = (listId: string) => {
-    return tasks.filter((task: any) => task.listId === listId);
+    const result = tasks.filter((task: any) => task.listId === listId);
+    return result;
   };
 
   const listMenu = (listId: string, listName: string) => (
@@ -275,11 +400,19 @@ const BoardView: React.FC<{ boardId?: string }> = ({ boardId = "board_1" }) => {
           <div className="board-header">
             <div className="board-header-left">
               <Title level={2} className="board-title">
-                Tổ chức sự kiện Year-end party!
+                {boardTitle}
               </Title>
 
               <div className="board-actions-group">
-                <Button size="large" icon={<StarOutlined />} className="board-btn" />
+                <Button
+                  size="large"
+                  icon={isStarred ? <StarFilled /> : <StarOutlined />}
+                  className="board-btn"
+                  onClick={handleToggleStar}
+                  style={
+                    isStarred ? { color: "#FAAD14" } : { color: "inherit" }
+                  }
+                />
                 <Button
                   size="large"
                   className="board-btn"
@@ -288,7 +421,11 @@ const BoardView: React.FC<{ boardId?: string }> = ({ boardId = "board_1" }) => {
                 >
                   Board
                 </Button>
-                <Button size="large" icon={<TableOutlined />} className="board-btn">
+                <Button
+                  size="large"
+                  icon={<TableOutlined />}
+                  className="board-btn"
+                >
                   Table
                 </Button>
                 <Button
@@ -369,36 +506,39 @@ const BoardView: React.FC<{ boardId?: string }> = ({ boardId = "board_1" }) => {
                         </div>
 
                         <div className="cards-scroll-container">
-                          {listTasks && listTasks.length > 0 ? (
-                            listTasks.map((card: any) => (
-                              <Card
-                                key={card.id}
-                                size="small"
-                                className="card-item"
-                                hoverable
-                                onClick={() => handleCardClick(card)}
-                              >
-                                <div className="card-content">
-                                  <input
-                                    type="checkbox"
-                                    checked={card.completed || false}
-                                    onChange={(e) =>
-                                      handleToggleTask(card.id, card.completed)
-                                    }
-                                    onClick={(e) => e.stopPropagation()}
-                                    className="card-checkbox"
-                                  />
-                                  <span
-                                    className={`card-text ${
-                                      card.completed ? "completed" : ""
-                                    }`}
-                                  >
-                                    {card.title}
-                                  </span>
-                                </div>
-                              </Card>
-                            ))
-                          ) : null}
+                          {listTasks && listTasks.length > 0
+                            ? listTasks.map((card: any) => (
+                                <Card
+                                  key={card.id}
+                                  size="small"
+                                  className="card-item"
+                                  hoverable
+                                  onClick={() => handleCardClick(card)}
+                                >
+                                  <div className="card-content">
+                                    <input
+                                      type="checkbox"
+                                      checked={card.completed || false}
+                                      onChange={(e) =>
+                                        handleToggleTask(
+                                          card.id,
+                                          card.completed
+                                        )
+                                      }
+                                      onClick={(e) => e.stopPropagation()}
+                                      className="card-checkbox"
+                                    />
+                                    <span
+                                      className={`card-text ${
+                                        card.completed ? "completed" : ""
+                                      }`}
+                                    >
+                                      {card.title}
+                                    </span>
+                                  </div>
+                                </Card>
+                              ))
+                            : null}
 
                           {/* Add Card Section */}
                           {addingCardToList === list.id ? (
@@ -407,7 +547,9 @@ const BoardView: React.FC<{ boardId?: string }> = ({ boardId = "board_1" }) => {
                                 ref={addCardInputRef}
                                 placeholder="Enter a title or paste a link"
                                 value={newCardTitle}
-                                onChange={(e) => setNewCardTitle(e.target.value)}
+                                onChange={(e) =>
+                                  setNewCardTitle(e.target.value)
+                                }
                                 onKeyDown={handleKeyDownCard}
                                 className="add-card-input"
                               />
@@ -513,6 +655,7 @@ const BoardView: React.FC<{ boardId?: string }> = ({ boardId = "board_1" }) => {
           visible={!!selectedCard}
           onClose={handleCloseDetailModal}
           card={selectedCard}
+          lists={lists}
         />
       )}
     </div>

@@ -1,5 +1,5 @@
-import React, { useState, useRef } from "react";
-import { Modal, Input, Select, Button } from "antd";
+import React, { useState, useRef, useEffect } from "react";
+import { Modal, Input, Select, Button, message } from "antd";
 import {
   AlignLeftOutlined,
   TagOutlined,
@@ -7,6 +7,8 @@ import {
   MinusOutlined,
 } from "@ant-design/icons";
 import { Editor } from "@tinymce/tinymce-react";
+import { useDispatch } from "react-redux";
+import { updateTask, deleteTask } from "../../../task/taskSlice";
 import MoveCardModal from "./MoveCardModal";
 import LabelListModal from "./LabelListModal";
 import DatePickerModal from "./DatePickerModal";
@@ -15,18 +17,22 @@ interface CardEditModalProps {
   visible: boolean;
   onClose: () => void;
   card: any;
+  lists: any[];
 }
 
 const CardEditModal: React.FC<CardEditModalProps> = ({
   visible,
   onClose,
   card,
+  lists,
 }) => {
-  const [cardTitle, setCardTitle] = useState(card?.title || "Kịch bản");
-  const [description, setDescription] = useState(card?.description || "");
-  const [listStatus, setListStatus] = useState(
-    card?.listStatus || "IN-PROGRESS"
-  );
+  const dispatch = useDispatch();
+
+  // Default states
+  const [cardTitle, setCardTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [listId, setListId] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
 
   // các modal con
   const [isMoveModalVisible, setIsMoveModalVisible] = useState(false);
@@ -35,10 +41,60 @@ const CardEditModal: React.FC<CardEditModalProps> = ({
 
   const editorRef = useRef<any>(null);
 
+  // Update states chỉ khi visible thay đổi và card có giá trị
+  useEffect(() => {
+    if (visible && card) {
+      setCardTitle(card.title || "");
+      setDescription(card.description || "");
+      setListId(card.listId || "");
+    }
+  }, [visible, card?.id]);
+
   // --- HANDLERS ---
-  const handleSave = () => {
-    console.log("✅ Save card:", { cardTitle, description, listStatus });
-    onClose(); // đóng modal chính
+  const handleSave = async () => {
+    if (!cardTitle.trim()) {
+      message.warning("Please enter a card title");
+      return;
+    }
+
+    setIsSaving(true);
+    try {
+      await dispatch(
+        updateTask({
+          id: card.id,
+          title: cardTitle.trim(),
+          description: description,
+          listId: listId,
+        }) as any
+      );
+      message.success("Card saved successfully!");
+      onClose();
+    } catch (error) {
+      console.error("Error saving card:", error);
+      message.error("Failed to save card");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    Modal.confirm({
+      title: "Delete Card",
+      content: "Are you sure you want to delete this card?",
+      okText: "Yes",
+      cancelText: "No",
+      okButtonProps: { danger: true },
+      onOk: async () => {
+        try {
+          await dispatch(deleteTask(card.id) as any);
+          message.success("Card deleted successfully!");
+          onClose();
+        } catch (error) {
+          console.error("Error deleting card:", error);
+          message.error("Failed to delete card");
+        }
+      },
+    });
   };
 
   const handleOpenMoveModal = () => setIsMoveModalVisible(true);
@@ -47,10 +103,13 @@ const CardEditModal: React.FC<CardEditModalProps> = ({
   const handleOpenLabelModal = () => setIsLabelModalVisible(true);
   const handleCloseLabelModal = () => setIsLabelModalVisible(false);
 
-  const handleMove = (newList: string, newPosition: string) => {
-    setListStatus(newList);
-    console.log("📦 Card moved to:", newList, "position:", newPosition);
+  const handleMove = (newListId: string, newPosition: string) => {
+    setListId(newListId);
+    console.log("🔦 Card moved to:", newListId, "position:", newPosition);
   };
+
+  // Safety check
+  if (!card) return null;
 
   return (
     <>
@@ -63,6 +122,7 @@ const CardEditModal: React.FC<CardEditModalProps> = ({
         width={768}
         centered
         className="card-edit-modal"
+        destroyOnClose
       >
         <div className="space-y-4">
           {/* Tiêu đề card + checkbox */}
@@ -84,21 +144,31 @@ const CardEditModal: React.FC<CardEditModalProps> = ({
             </div>
           </div>
 
-          {/* In list section - click để mở Move modal */}
+          {/* In list section */}
           <div className="flex items-center gap-2 !ml-8">
             <span className="text-sm text-gray-600">in list</span>
-            <div onClick={handleOpenMoveModal} className="cursor-pointer">
+            <div 
+              onClick={handleOpenMoveModal}
+              className="cursor-pointer"
+            >
               <Select
-                value={listStatus}
+                value={listId}
                 open={false}
                 className="w-fit"
                 style={{ minWidth: "120px" }}
                 suffixIcon={<span>▼</span>}
-                options={[
-                  { label: "TODO", value: "TODO" },
-                  { label: "IN-PROGRESS", value: "IN-PROGRESS" },
-                  { label: "DONE", value: "DONE" },
-                ]}
+                options={
+                  lists && lists.length > 0
+                    ? lists.map((list) => ({
+                        label: list.title,
+                        value: list.id,
+                      }))
+                    : []
+                }
+                onChange={(value) => {
+                  setListId(value);
+                  handleOpenMoveModal();
+                }}
               />
             </div>
           </div>
@@ -153,6 +223,7 @@ const CardEditModal: React.FC<CardEditModalProps> = ({
                   <Button
                     type="primary"
                     onClick={handleSave}
+                    loading={isSaving}
                     className="bg-blue-600 hover:bg-blue-700 w-[60px] !h-[32px] !text-[14px]"
                   >
                     Save
@@ -190,7 +261,10 @@ const CardEditModal: React.FC<CardEditModalProps> = ({
               </button>
 
               {/* Delete button */}
-              <button className="w-full h-8 bg-red-600 hover:bg-red-700 transition px-3 rounded flex items-center gap-2">
+              <button
+                onClick={handleDelete}
+                className="w-full h-8 bg-red-600 hover:bg-red-700 transition px-3 rounded flex items-center gap-2"
+              >
                 <MinusOutlined className="!ml-2 text-base flex-shrink-0 text-white" />
                 <span className="text-sm font-medium text-white">Delete</span>
               </button>
@@ -199,26 +273,33 @@ const CardEditModal: React.FC<CardEditModalProps> = ({
         </div>
       </Modal>
 
-      {/* --- Modal con --- */}
-      <MoveCardModal
-        visible={isMoveModalVisible}
-        onClose={handleCloseMoveModal}
-        currentList={listStatus}
-        onMove={handleMove}
-      />
+      {/* --- Modal con: Move Card --- */}
+      {isMoveModalVisible && (
+        <MoveCardModal
+          visible={isMoveModalVisible}
+          onClose={handleCloseMoveModal}
+          card={card}
+          lists={lists}
+          currentListId={listId}
+          onMove={handleMove}
+        />
+      )}
 
-      <LabelListModal
-        visible={isLabelModalVisible}
-        onClose={handleCloseLabelModal}
-      />
+      {/* --- Modal con: Label List --- */}
+      {isLabelModalVisible && (
+        <LabelListModal
+          visible={isLabelModalVisible}
+          onClose={handleCloseLabelModal}
+        />
+      )}
 
-      {/* Date Picker Modal */}
-      <DatePickerModal
-        visible={isDateModalVisible}
-        onClose={() => setIsDateModalVisible(false)}
-      />
-
-      
+      {/* --- Modal con: Date Picker --- */}
+      {isDateModalVisible && (
+        <DatePickerModal
+          visible={isDateModalVisible}
+          onClose={() => setIsDateModalVisible(false)}
+        />
+      )}
     </>
   );
 };

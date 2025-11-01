@@ -1,30 +1,87 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Modal, Input, Select, Button } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
+import { useSelector } from "react-redux";
 
 interface MoveCardModalProps {
   visible: boolean;
   onClose: () => void;
-  currentList: string;
-  onMove: (newList: string, newPosition: string) => void;
+  card: any;
+  lists: any[];
+  currentListId: string;
+  onMove?: (newList: string, newPosition: string) => void;
 }
 
 const MoveCardModal: React.FC<MoveCardModalProps> = ({
   visible,
   onClose,
-  currentList,
+  card,
+  lists,
+  currentListId,
   onMove,
 }) => {
-  const [selectedBoard, setSelectedBoard] = useState(
-    "Tổ chức sự kiện Year-end party !"
-  );
-  const [selectedList, setSelectedList] = useState(currentList);
+  const tasks = useSelector((state: any) => state.tasks.items);
+
+  const [selectedList, setSelectedList] = useState(currentListId || "");
   const [selectedPosition, setSelectedPosition] = useState("1");
+  const [taskCountInList, setTaskCountInList] = useState(0);
+
+  const boardTitle = "Tổ chức sự kiện Year-end party!";
+
+  // Khởi tạo khi modal mở
+  useEffect(() => {
+    if (visible && card) {
+      setSelectedList(currentListId || card.listId || "");
+      setSelectedPosition("1");
+    }
+  }, [visible, card?.id, currentListId]);
+
+  // Cập nhật số tasks khi list thay đổi
+  useEffect(() => {
+    if (selectedList && tasks) {
+      const tasksInList = tasks.filter((t: any) => t.listId === selectedList);
+      setTaskCountInList(tasksInList.length);
+      // Reset position khi thay đổi list
+      setSelectedPosition("1");
+    }
+  }, [selectedList, tasks]);
+
+  // Lấy danh sách tasks trong list được chọn
+  const getTasksInList = (listId: string) => {
+    if (!tasks) return [];
+    return tasks.filter((t: any) => t.listId === listId);
+  };
+
+  // Tính số vị trí tối đa
+  const getMaxPosition = () => {
+    if (!selectedList) return 1;
+    const tasksInList = getTasksInList(selectedList);
+    return Math.max(tasksInList.length + 1, 1);
+  };
+
+  const positionOptions = Array.from(
+    { length: getMaxPosition() },
+    (_, i) => ({
+      label: String(i + 1),
+      value: String(i + 1),
+    })
+  );
 
   const handleMove = () => {
-    onMove(selectedList, selectedPosition);
+    if (onMove) {
+      onMove(selectedList, selectedPosition);
+    }
     onClose();
   };
+
+  // Lấy tên list từ ID
+  const getListName = (listId: string) => {
+    if (!listId || !lists) return "Unknown";
+    const list = lists.find((l) => l.id === listId);
+    return list ? list.title : "Unknown";
+  };
+
+  if (!card) return null;
 
   return (
     <Modal
@@ -41,6 +98,7 @@ const MoveCardModal: React.FC<MoveCardModalProps> = ({
         <CloseOutlined className="text-gray-500 hover:text-gray-700" />
       }
       centered
+      destroyOnClose
       bodyStyle={{
         borderRadius: "10px",
         display: "flex",
@@ -62,8 +120,8 @@ const MoveCardModal: React.FC<MoveCardModalProps> = ({
             Board
           </label>
           <Input
-            value={selectedBoard}
-            onChange={(e) => setSelectedBoard(e.target.value)}
+            value={boardTitle}
+            disabled
             className="!w-[352px] !h-[40px] rounded-md"
             style={{ fontSize: "13px" }}
           />
@@ -71,7 +129,7 @@ const MoveCardModal: React.FC<MoveCardModalProps> = ({
 
         {/* List & Position */}
         <div className="flex gap-2">
-          <div className="flex-2 !w-[200px] !h-[40px]">
+          <div className="flex-2 !w-[200px]">
             <label className="block text-xs font-medium text-gray-700 mb-1">
               List
             </label>
@@ -84,11 +142,14 @@ const MoveCardModal: React.FC<MoveCardModalProps> = ({
                 fontSize: "13px",
               }}
               dropdownStyle={{ minWidth: "120px" }}
-              options={[
-                { label: "Todo", value: "TODO" },
-                { label: "In-progress", value: "IN-PROGRESS" },
-                { label: "Done", value: "DONE" },
-              ]}
+              options={
+                lists && lists.length > 0
+                  ? lists.map((list) => ({
+                      label: list.title,
+                      value: list.id,
+                    }))
+                  : []
+              }
             />
           </div>
 
@@ -106,15 +167,17 @@ const MoveCardModal: React.FC<MoveCardModalProps> = ({
                 fontSize: "13px",
               }}
               dropdownStyle={{ minWidth: "80px" }}
-              options={[
-                { label: "1", value: "1" },
-                { label: "2", value: "2" },
-                { label: "3", value: "3" },
-                { label: "4", value: "4" },
-                { label: "5", value: "5" },
-              ]}
+              options={positionOptions}
             />
           </div>
+        </div>
+
+        {/* Info text */}
+        <div className="text-xs text-gray-500 mt-2">
+          <p>
+            {taskCountInList} card{taskCountInList !== 1 ? "s" : ""} in{" "}
+            <strong>{getListName(selectedList)}</strong>
+          </p>
         </div>
 
         {/* Move button */}
