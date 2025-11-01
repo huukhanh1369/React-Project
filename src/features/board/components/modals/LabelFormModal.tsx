@@ -100,7 +100,7 @@ const LabelFormModal: React.FC<LabelFormModalProps> = ({
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           placeholder="Enter label name"
-          className="h-[36px] text-sm"
+          className="h-[24px] text-sm !w-[200px]"
           maxLength={50}
         />
         <p className="text-xs text-gray-400 mt-1">{title.length}/50</p>
