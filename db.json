@@ -296,10 +296,10 @@
       "listId": "list_1761999808855",
       "description": "",
       "position": "1",
-      "completed": false,
+      "completed": true,
       "tags": [],
       "createdAt": "2025-11-01T12:23:31.544Z",
-      "updatedAt": "2025-11-01T12:23:31.544Z"
+      "updatedAt": "2025-11-01T12:49:03.927Z"
     },
     {
       "id": "task_1761999821521",
@@ -336,6 +336,16 @@
       "name": "Important",
       "color": "#FFC300",
       "taskId": "task_5"
+    },
+    {
+      "id": "tag_1762001057508",
+      "name": "not donw",
+      "color": "#A78BFA"
+    },
+    {
+      "id": "tag_1762001077556",
+      "name": "drg",
+      "color": "#C6F6D5"
     }
   ]
 }
