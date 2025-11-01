@@ -60,9 +60,7 @@
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
-/* ===========================
-   SIDEBAR BOARDS LIST (ở BoardView)
-=========================== */
+
 /* ===========================
    SIDEBAR BOARDS LIST (ở BoardView)
 =========================== */
@@ -95,11 +93,15 @@
   padding-left: 9px;
 }
 
-.sidebar-board-item .board-color {
-  width: 20px;
-  height: 20px;
+/* ===== Board Thumbnail ===== */
+.sidebar-board-item .board-thumbnail {
+  width: 28px;
+  height: 28px;
   border-radius: 4px;
   flex-shrink: 0;
+  background-size: cover;
+  background-position: center;
+  border: 1px solid #e5e7eb;
 }
 
 .sidebar-board-item .board-name {
@@ -130,7 +132,7 @@
   background: #9ca3af;
 }
 
-/* áº¨n sidebar khi mobile, trÆ°á»£t tá»« pháº£i ra */
+/* Ẩn sidebar khi mobile, trượt từ phải ra */
 @media (max-width: 768px) {
   .sidebar {
     left: auto;
@@ -144,6 +146,7 @@
     transform: translateX(0);
   }
 }
+
 /* ===========================
    MENU STYLING
 =========================== */

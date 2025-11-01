@@ -23,7 +23,8 @@
       "userId": 1,
       "createdAt": "2025-10-30T01:17:02.180Z",
       "background": "/images/Board1.png",
-      "starred": false
+      "starred": false,
+      "closed": true
     },
     {
       "id": "1761792633840",
@@ -78,6 +79,24 @@
       "color": "#2196f3",
       "userId": 1,
       "createdAt": "2025-11-01T12:23:14.758Z",
+      "starred": false,
+      "closed": false
+    },
+    {
+      "id": "1762000201586",
+      "title": "è",
+      "background": "/images/Board1.png",
+      "userId": 1,
+      "createdAt": "2025-11-01T12:30:01.586Z",
+      "starred": false,
+      "closed": false
+    },
+    {
+      "id": "1762000204572",
+      "title": "êfe",
+      "color": "#00c853",
+      "userId": 1,
+      "createdAt": "2025-11-01T12:30:04.572Z",
       "starred": false,
       "closed": false
     }

@@ -59,7 +59,7 @@ const Dashboard: React.FC = () => {
     try {
       if (editingBoard) {
         // ✅ Update board cũ
-        console.log("📝 Updating board:", editingBoard.id);
+        console.log("🔄 Updating board:", editingBoard.id);
         await dispatch(updateBoard(boardData) as any);
         message.success("Board updated successfully!");
       } else {
@@ -93,6 +93,25 @@ const Dashboard: React.FC = () => {
       return "🗂️ Closed Boards";
     }
     return "Your Workspace";
+  };
+
+  // ===== Get board background style =====
+  const getBoardBackgroundStyle = (board: Board) => {
+    if (board.background) {
+      return {
+        backgroundImage: `url(${board.background})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      };
+    } else if (board.color) {
+      return {
+        backgroundColor: board.color,
+      };
+    } else {
+      return {
+        backgroundColor: "#0079BF",
+      };
+    }
   };
 
   return (
@@ -132,10 +151,10 @@ const Dashboard: React.FC = () => {
               {/* Các board hiện có */}
               {displayedBoards && displayedBoards.length > 0 ? (
                 displayedBoards.map((board: Board) => (
-                  <Card
+                  <div
                     key={board.id}
                     className="board-card"
-                    hoverable
+                    style={getBoardBackgroundStyle(board)}
                     onClick={() => {
                       // Không navigate đến closed boards
                       if (!board.closed) {
@@ -143,21 +162,6 @@ const Dashboard: React.FC = () => {
                       }
                     }}
                   >
-                    {board.background ? (
-                      <img
-                        src={board.background}
-                        alt={board.title}
-                        className="board-image"
-                      />
-                    ) : (
-                      <div
-                        style={{
-                          backgroundColor: board.color || "#0079BF",
-                          width: "100%",
-                          height: "100%",
-                        }}
-                      />
-                    )}
                     <div className="board-overlay">
                       <Button
                         icon={<EditOutlined />}
@@ -169,7 +173,7 @@ const Dashboard: React.FC = () => {
                         Edit this board
                       </Button>
                     </div>
-                  </Card>
+                  </div>
                 ))
               ) : (
                 <div style={{ gridColumn: "1 / -1", textAlign: "center", padding: "50px" }}>

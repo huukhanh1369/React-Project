@@ -35,7 +35,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
     const pathParts = location.pathname.split("/");
     const boardId = pathParts[pathParts.length - 1];
     if (isBoardView && boardId) {
-      console.log("🔄 Sidebar: Updating currentBoardId to:", boardId);
+      console.log("📄 Sidebar: Updating currentBoardId to:", boardId);
       dispatch(setCurrentBoardId(boardId));
     }
   }, [location.pathname, dispatch, isBoardView]);
@@ -74,6 +74,25 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
     const board = boards.find((b: any) => b.id === currentBoardId);
     return board ? board.title : "";
   }, [currentBoardId, boards]);
+
+  // ===== Get board background style =====
+  const getBoardBackgroundStyle = (board: any) => {
+    if (board.background) {
+      return {
+        backgroundImage: `url(${board.background})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      };
+    } else if (board.color) {
+      return {
+        backgroundColor: board.color,
+      };
+    } else {
+      return {
+        backgroundColor: "#0079BF",
+      };
+    }
+  };
 
   return (
     <>
@@ -128,15 +147,16 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                       currentBoardId === board.id ? "active" : ""
                     }`}
                     onClick={() => {
-                      console.log("🔄 Navigating to board:", board.id, board.title);
+                      console.log("📄 Navigating to board:", board.id, board.title);
                       dispatch(setCurrentBoardId(board.id));
                       navigate(`/board/${board.id}`);
                       onClose();
                     }}
                   >
+                    {/* Board Thumbnail */}
                     <div
-                      className="board-color"
-                      style={{ backgroundColor: board.color || "#0079BF" }}
+                      className="board-thumbnail"
+                      style={getBoardBackgroundStyle(board)}
                     />
                     <span className="board-name" title={board.title}>
                       {board.title}
